@@ -25,6 +25,8 @@ class Config:
     MODEL_DIR = os.path.join(project_root, "vosk-model-small-es-0.42")
     MODEL_URL = "https://alphacephei.com/vosk/models/vosk-model-small-es-0.42.zip"
     STEAM_APPS_PATH = r"C:\Program Files (x86)\Steam\steamapps"
+    STEAM_EXE_PATH = r"C:\Program Files (x86)\Steam\steam.exe"
+
     AGENDA_PATH = os.path.join(project_root, "data", "agenda.json")
     
     # API Keys

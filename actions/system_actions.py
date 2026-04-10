@@ -63,10 +63,10 @@ def get_weather(city="Manises"):
 def play_spotify(query):
     """Abre Spotify y busca/reproduce una canción."""
     logger.info(f"Buscando en Spotify: {query}")
-    # Usamos el esquema de búsqueda de Spotify
-    url = f"spotify:search:{query}"
+    # Usamos os.startfile para abrir el URI directamente sin pasar por CMD
     try:
-        subprocess.Popen(["start", url], shell=True)
+        url = f"spotify:search:{query.replace(' ', '%20')}"
+        os.startfile(url)
         return f"Reproduciendo {query} en Spotify, señor."
     except Exception as e:
         logger.error(f"Error lanzando Spotify: {e}")
@@ -75,19 +75,34 @@ def play_spotify(query):
 def launch_steam(game_name=None):
     """Abre Steam o un juego específico si se proporciona el nombre."""
     if not game_name or game_name.lower() == "steam":
-        subprocess.Popen(["start", "steam://open/main"], shell=True)
-        return "Abriendo Steam, señor."
+        try:
+            # Ejecución directa del binario para evitar CMD
+            if os.path.exists(Config.STEAM_EXE_PATH):
+                subprocess.Popen([Config.STEAM_EXE_PATH])
+                return "Abriendo Steam, señor."
+            else:
+                os.startfile("steam://open/main")
+                return "Abriendo Steam vía protocolo, señor."
+        except Exception as e:
+            logger.error(f"Error abriendo Steam: {e}")
+            return "No he podido abrir Steam directamente, señor."
     
     logger.info(f"Buscando juego en Steam: {game_name}")
     appid = find_steam_appid(game_name)
     
-    if appid:
-        subprocess.Popen(["start", f"steam://rungameid/{appid}"], shell=True)
-        return f"Iniciando {game_name} en Steam, señor. Disfrute."
-    else:
-        # Si no lo encontramos instalado, intentamos abrir la búsqueda en la tienda
-        subprocess.Popen(["start", f"steam://openurl/https://store.steampowered.com/search/?term={game_name}"], shell=True)
-        return f"No he encontrado {game_name} instalado, abriendo la tienda de Steam, señor."
+    try:
+        if appid:
+            # URI directo de Steam vía el sistema operativo
+            os.startfile(f"steam://rungameid/{appid}")
+            return f"Iniciando {game_name} en Steam, señor. Disfrute."
+        else:
+            # Fallback a la tienda si no se encuentra localmente
+            os.startfile(f"steam://openurl/https://store.steampowered.com/search/?term={game_name.replace(' ', '%20')}")
+            return f"No he encontrado {game_name} instalado, abriendo la tienda de Steam, señor."
+    except Exception as e:
+        logger.error(f"Error lanzando juego de Steam: {e}")
+        return f"Error al intentar lanzar {game_name}."
+
 
 def find_steam_appid(game_name):
     """Busca el AppID de un juego instalado localmente."""
