@@ -28,7 +28,7 @@ class Config:
     
     # API Keys
     ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
-    PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
     
     # Triggers
     WAKE_PHRASE = "jarvis estas ahi"
@@ -38,8 +38,8 @@ class Config:
     def validate(cls):
         """Validates critical configuration."""
         missing = []
-        if not cls.PERPLEXITY_API_KEY:
-            missing.append("PERPLEXITY_API_KEY")
+        if not cls.GEMINI_API_KEY:
+            missing.append("GEMINI_API_KEY")
         
         if missing:
             logging.warning(f"Variables de entorno faltantes: {', '.join(missing)}")

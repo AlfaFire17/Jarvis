@@ -6,17 +6,18 @@ from voice.listener import VoiceListener
 from voice.tts import TTSProvider
 from core.intent_router import IntentRouter, Intent
 from actions.system_actions import open_perplexity, open_youtube, say_hello, no_command_response
-from integrations.perplexity_client import PerplexityClient
+from integrations.gemini_client import GeminiClient
 
-async def on_trigger(listener, tts, router, perplexity):
+async def on_trigger(listener, tts, router, gemini):
     """Acciones a realizar cuando se detecta el wake word."""
     logger.info("Protocolo JARVIS: Activado.")
     
-    # Feedback visual/log: estamos escuchando
+    # Visual feedback: listening
     logger.info("<<< Escuchando orden... >>>")
     
     # 1. Capturar la orden del usuario
-    command_text = listener.capture_command(timeout=5.0)
+    # Damos un poco más de tiempo para la orden (7 segundos)
+    command_text = listener.capture_command(timeout=7.0)
     
     if not command_text:
         response = no_command_response()
@@ -32,17 +33,17 @@ async def on_trigger(listener, tts, router, perplexity):
         await tts.speak(response)
         
     elif intent == Intent.OPEN_PERPLEXITY:
-        await tts.speak("Abriendo Perplexity, señor.")
+        await tts.speak("Abriendo Perplexity, señor. Siempre es bueno buscar respuestas.")
         open_perplexity()
         
     elif intent == Intent.OPEN_YOUTUBE:
-        await tts.speak("Abriendo YouTube, señor.")
+        await tts.speak("Entendido. Abriendo YouTube.")
         open_youtube()
         
     elif intent == Intent.GENERAL_QUERY:
-        # Consulta real a Perplexity
-        await tts.speak("Consultando con mi motor de búsqueda...")
-        answer = perplexity.query(original_text)
+        # Consulta real a Gemini
+        await tts.speak("Consultando en mi base de datos, un momento...")
+        answer = gemini.ask(original_text)
         await tts.speak(answer)
     
     elif intent == Intent.UNKNOWN:
@@ -56,21 +57,21 @@ def main():
         sys.exit(1)
 
     # 2. Inicializar servicios
-    logger.info("--- JARVIS Voice Assistant (Fase 2: Comando Único) ---")
+    logger.info("--- JARVIS Voice Assistant (Fase 2: Gemini Integration) ---")
     
     tts = TTSProvider()
     router = IntentRouter()
-    perplexity = PerplexityClient()
+    gemini = GeminiClient()
     listener = VoiceListener()
 
     if not listener.initialize():
-        logger.error("No se pudo inicializar el modelo de voz.")
+        logger.error("No se pudo inicializar el sistema de voz.")
         sys.exit(1)
 
     # 3. Definir el callback de disparo
     def trigger_callback():
         # Ejecutar el flujo de comando en el loop de eventos
-        asyncio.run(on_trigger(listener, tts, router, perplexity))
+        asyncio.run(on_trigger(listener, tts, router, gemini))
 
     # 4. Iniciar escucha
     try:
@@ -78,7 +79,8 @@ def main():
     except KeyboardInterrupt:
         logger.info("Deteniendo JARVIS...")
     except Exception as e:
-        logger.critical(f"Error fatal: {e}")
+        logger.critical(f"Error fatal en el núcleo: {e}")
 
 if __name__ == "__main__":
     main()
+
