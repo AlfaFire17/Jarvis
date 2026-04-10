@@ -31,7 +31,8 @@ class Config:
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
     
     # Triggers
-    WAKE_PHRASE = "jarvis estas ahi"
+    WAKE_PHRASE = "jarvis"
+
     GREETING_TEXT = "Aquí estoy señor, siempre disponible para tí"
 
     @classmethod

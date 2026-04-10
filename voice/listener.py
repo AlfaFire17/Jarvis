@@ -43,8 +43,9 @@ class VoiceListener:
             self.wake_rec = KaldiRecognizer(
                 self.model, 
                 Config.FS, 
-                f'["{Config.WAKE_PHRASE}", "jarvis", "estas", "ahi", "[unk]"]'
+                f'["{Config.WAKE_PHRASE}", "[unk]"]'
             )
+
             # Reconocedor para comandos (abierto)
             self.command_rec = KaldiRecognizer(self.model, Config.FS)
             return True
