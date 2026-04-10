@@ -5,7 +5,10 @@ from core.logger import logger
 from voice.listener import VoiceListener
 from voice.tts import TTSProvider
 from core.intent_router import IntentRouter, Intent
-from actions.system_actions import open_perplexity, open_youtube, say_hello, no_command_response
+from actions.system_actions import (
+    open_perplexity, open_youtube, say_hello, no_command_response,
+    get_current_time, get_current_date, get_weather, play_spotify, launch_steam
+)
 from integrations.gemini_client import GeminiClient
 
 async def on_trigger(listener, tts, router, gemini):
@@ -16,7 +19,6 @@ async def on_trigger(listener, tts, router, gemini):
     logger.info("<<< Escuchando orden... >>>")
     
     # 1. Capturar la orden del usuario
-    # Damos un poco más de tiempo para la orden (7 segundos)
     command_text = listener.capture_command(timeout=7.0)
     
     if not command_text:
@@ -25,7 +27,7 @@ async def on_trigger(listener, tts, router, gemini):
         return
 
     # 2. Enrutar la intención
-    intent, original_text = router.route(command_text)
+    intent, payload = router.route(command_text)
     
     # 3. Ejecutar acción
     if intent == Intent.GREETING:
@@ -39,11 +41,32 @@ async def on_trigger(listener, tts, router, gemini):
     elif intent == Intent.OPEN_YOUTUBE:
         await tts.speak("Entendido. Abriendo YouTube.")
         open_youtube()
+
+    elif intent == Intent.OPEN_STEAM:
+        response = launch_steam(payload)
+        await tts.speak(response)
+
+    elif intent == Intent.PLAY_SPOTIFY:
+        response = play_spotify(payload)
+        await tts.speak(response)
+
+    elif intent == Intent.GET_TIME:
+        response = get_current_time()
+        await tts.speak(response)
+
+    elif intent == Intent.GET_DATE:
+        response = get_current_date()
+        await tts.speak(response)
+
+    elif intent == Intent.GET_WEATHER:
+        # Si no se detecta ciudad, usa la por defecto en el método
+        response = get_weather(payload) if payload else get_weather()
+        await tts.speak(response)
         
     elif intent == Intent.GENERAL_QUERY:
         # Consulta real a Gemini
         await tts.speak("Consultando en mi base de datos, un momento...")
-        answer = gemini.ask(original_text)
+        answer = gemini.ask(payload)
         await tts.speak(answer)
     
     elif intent == Intent.UNKNOWN:
@@ -57,7 +80,7 @@ def main():
         sys.exit(1)
 
     # 2. Inicializar servicios
-    logger.info("--- JARVIS Voice Assistant (Fase 2: Gemini Integration) ---")
+    logger.info("--- JARVIS Voice Assistant (Fase 4: System Integration) ---")
     
     tts = TTSProvider()
     router = IntentRouter()
@@ -83,4 +106,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

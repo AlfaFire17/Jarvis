@@ -24,11 +24,13 @@ class Config:
     OPERA_PATH = os.getenv("OPERA_PATH") or r"C:\Users\pablo\AppData\Local\Programs\Opera GX\opera.exe"
     MODEL_DIR = os.path.join(project_root, "vosk-model-small-es-0.42")
     MODEL_URL = "https://alphacephei.com/vosk/models/vosk-model-small-es-0.42.zip"
+    STEAM_APPS_PATH = r"C:\Program Files (x86)\Steam\steamapps"
     AGENDA_PATH = os.path.join(project_root, "data", "agenda.json")
     
     # API Keys
     ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
     
     # Triggers
     WAKE_PHRASE = "jarvis"
