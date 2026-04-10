@@ -2,6 +2,9 @@
 __pycache__/
 *.mp3
 *.wav
-temp_speech.mp3
-vosk-model-*/
+# Local JARVIS files
+jarvis.log
+temp_speech*
+data/agenda.json
+# vosk-model-*/ (Eliminado para incluir el modelo a petición del usuario)
 model.zip
