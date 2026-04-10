@@ -2,6 +2,7 @@ import os
 import subprocess
 import webbrowser
 import requests
+import winreg
 from datetime import datetime
 from core.config import Config
 from core.logger import logger
@@ -65,7 +66,9 @@ def play_spotify(query):
     logger.info(f"Buscando en Spotify: {query}")
     # Usamos os.startfile para abrir el URI directamente sin pasar por CMD
     try:
-        url = f"spotify:search:{query.replace(' ', '%20')}"
+        # Spotify URI encoding
+        encoded_query = query.replace(' ', '%20')
+        url = f"spotify:search:{encoded_query}"
         os.startfile(url)
         return f"Reproduciendo {query} en Spotify, señor."
     except Exception as e:
@@ -97,36 +100,59 @@ def launch_steam(game_name=None):
             return f"Iniciando {game_name} en Steam, señor. Disfrute."
         else:
             # Fallback a la tienda si no se encuentra localmente
-            os.startfile(f"steam://openurl/https://store.steampowered.com/search/?term={game_name.replace(' ', '%20')}")
+            encoded_game = game_name.replace(' ', '%20')
+            os.startfile(f"steam://openurl/https://store.steampowered.com/search/?term={encoded_game}")
             return f"No he encontrado {game_name} instalado, abriendo la tienda de Steam, señor."
     except Exception as e:
         logger.error(f"Error lanzando juego de Steam: {e}")
         return f"Error al intentar lanzar {game_name}."
 
-
 def find_steam_appid(game_name):
-    """Busca el AppID de un juego instalado localmente."""
-    import re
-    steamapps_path = Config.STEAM_APPS_PATH
-    if not os.path.exists(steamapps_path):
-        return None
-    
+    """Busca el AppID de un juego en el Registro de Windows o en archivos locales."""
     game_name_clean = game_name.lower().strip()
     
+    # 1. Búsqueda en el Registro (Dinámica y global para todas las unidades)
     try:
-        for file in os.listdir(steamapps_path):
-            if file.endswith(".acf"):
-                with open(os.path.join(steamapps_path, file), "r", encoding="utf-8") as f:
-                    content = f.read()
-                    name_match = re.search(r'"name"\s+"(.*?)"', content)
-                    if name_match:
-                        installed_name = name_match.group(1).lower()
-                        if game_name_clean in installed_name:
-                            appid_match = re.search(r'"appid"\s+"(\d+)"', content)
-                            if appid_match:
-                                return appid_match.group(1)
+        steam_apps_key = r"Software\Valve\Steam\Apps"
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, steam_apps_key) as key:
+            # Enumerar subclaves (que son los AppIDs)
+            for i in range(winreg.QueryInfoKey(key)[0]):
+                appid = winreg.EnumKey(key, i)
+                try:
+                    with winreg.OpenKey(key, appid) as app_key:
+                        # Algunos juegos tienen el valor "Name", otros "name"
+                        try:
+                            installed_name, _ = winreg.QueryValueEx(app_key, "Name")
+                        except FileNotFoundError:
+                            installed_name, _ = winreg.QueryValueEx(app_key, "name")
+                        
+                        if game_name_clean in installed_name.lower():
+                            logger.info(f"Juego encontrado en registro: {installed_name} (AppID: {appid})")
+                            return appid
+                except Exception:
+                    continue
     except Exception as e:
-        logger.error(f"Error escaneando juegos de Steam: {e}")
+        logger.warning(f"Error buscando en el registro de Steam: {e}")
+
+    # 2. Fallback: Búsqueda en archivos .acf locales (por si el registro está incompleto)
+    try:
+        import re
+        steamapps_path = Config.STEAM_APPS_PATH
+        if os.path.exists(steamapps_path):
+            for file in os.listdir(steamapps_path):
+                if file.endswith(".acf"):
+                    with open(os.path.join(steamapps_path, file), "r", encoding="utf-8") as f:
+                        content = f.read()
+                        name_match = re.search(r'"name"\s+"(.*?)"', content)
+                        if name_match:
+                            installed_name = name_match.group(1).lower()
+                            if game_name_clean in installed_name:
+                                appid_match = re.search(r'"appid"\s+"(\d+)"', content)
+                                if appid_match:
+                                    logger.info(f"Juego encontrado en archivos local: {installed_name}")
+                                    return appid_match.group(1)
+    except Exception as e:
+        logger.error(f"Error escaneando archivos local de Steam: {e}")
     
     return None
 
