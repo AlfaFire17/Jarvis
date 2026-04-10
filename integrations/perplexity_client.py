@@ -32,10 +32,29 @@ class PerplexityClient:
             response.raise_for_status()
             data = response.json()
             answer = data['choices'][0]['message']['content']
-            return answer
+            
+            # Limpieza básica de la respuesta para TTS
+            cleaned_answer = self._clean_text(answer)
+            return cleaned_answer
         except Exception as e:
             logger.error(f"Error consultando Perplexity: {e}")
             return "Hubo un error al conectar con mi motor de búsqueda."
+
+    def _clean_text(self, text):
+        """Limpia el texto de markdown y lo recorta para TTS."""
+        import re
+        # Eliminar negritas, cursivas, etc.
+        text = re.sub(r'[*_#]', '', text)
+        # Eliminar citas tipo [1], [2], [1, 2]
+        text = re.sub(r'\[\d+(?:,\s*\d+)*\]', '', text)
+        # Eliminar enlaces markdown [texto](url)
+        text = re.sub(r'\[(.*?)\]\(.*?\)', r'\1', text)
+        
+        # Limitar longitud para no cansar al usuario (aprox 300 caracteres)
+        if len(text) > 300:
+            text = text[:300] + "... Para más detalles, por favor consulte la pantalla."
+            
+        return text.strip()
 
     def test_connection(self):
         """Verifica que la API key funcione con una consulta mínima."""

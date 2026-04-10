@@ -39,11 +39,14 @@ class VoiceListener:
         
         try:
             self.model = Model(Config.MODEL_DIR)
-            self.recognizer = KaldiRecognizer(
+            # Reconocedor para wake word (más restrictivo)
+            self.wake_rec = KaldiRecognizer(
                 self.model, 
                 Config.FS, 
                 f'["{Config.WAKE_PHRASE}", "jarvis", "estas", "ahi", "[unk]"]'
             )
+            # Reconocedor para comandos (abierto)
+            self.command_rec = KaldiRecognizer(self.model, Config.FS)
             return True
         except Exception as e:
             logger.error(f"Error inicializando Vosk: {e}")
@@ -57,8 +60,40 @@ class VoiceListener:
         audio_data = (indata * 32767).astype(np.int16).tobytes()
         self.q.put(audio_data)
 
+    def capture_command(self, timeout=5.0):
+        """Escucha una orden abierta durante un tiempo limitado."""
+        logger.info(f"Escuchando orden... (timeout: {timeout}s)")
+        import time
+        start_time = time.time()
+        
+        # Limpiar cola de audio previo a la activación
+        while not self.q.empty():
+            self.q.get()
+
+        while time.time() - start_time < timeout:
+            if not self.q.empty():
+                data = self.q.get()
+                if self.command_rec.AcceptWaveform(data):
+                    result = json.loads(self.command_rec.Result())
+                    text = result.get("text", "")
+                    if text:
+                        logger.info(f"Orden transcrita: '{text}'")
+                        return text
+            else:
+                time.sleep(0.01)
+        
+        # Si termina el tiempo, intentamos obtener lo último que se escuchó
+        final_result = json.loads(self.command_rec.FinalResult())
+        text = final_result.get("text", "")
+        if text:
+            logger.info(f"Orden transcrita (final): '{text}'")
+            return text
+            
+        logger.warning("Timeout agotado sin detectar orden.")
+        return ""
+
     def listen(self, trigger_callback):
-        """Bucle principal de escucha."""
+        """Bucle principal de escucha de wake word."""
         logger.info(f"Escuchando wake word: \"{Config.WAKE_PHRASE}\"")
         
         try:
@@ -66,17 +101,14 @@ class VoiceListener:
                                   channels=Config.CHANNELS, callback=self.callback):
                 while True:
                     data = self.q.get()
-                    if self.recognizer.AcceptWaveform(data):
-                        result = json.loads(self.recognizer.Result())
+                    if self.wake_rec.AcceptWaveform(data):
+                        result = json.loads(self.wake_rec.Result())
                         text = result.get("text", "")
                         
                         if Config.WAKE_PHRASE in text and not self.is_processing:
                             self.is_processing = True
                             logger.info("Wake word detectado!")
                             trigger_callback()
-                            # Cooldown breve para evitar disparos repetidos
-                            import time
-                            time.sleep(1.0)
                             self.is_processing = False
         except KeyboardInterrupt:
             logger.info("Escucha detenida por el usuario.")

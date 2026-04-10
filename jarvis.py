@@ -4,27 +4,50 @@ from core.config import Config
 from core.logger import logger
 from voice.listener import VoiceListener
 from voice.tts import TTSProvider
-from actions.system_actions import open_browser_with_urls, say_hello
-from services.agenda_service import AgendaService
+from core.intent_router import IntentRouter, Intent
+from actions.system_actions import open_perplexity, open_youtube, say_hello, no_command_response
 from integrations.perplexity_client import PerplexityClient
 
-async def on_trigger(tts, agenda, perplexity):
-    """Acciones a realizar cuando se detecta el comando de voz."""
-    logger.info("Procesando comando JARVIS...")
+async def on_trigger(listener, tts, router, perplexity):
+    """Acciones a realizar cuando se detecta el wake word."""
+    logger.info("Protocolo JARVIS: Activado.")
     
-    # Saludo inicial
-    greeting = say_hello()
-    await tts.speak(greeting)
+    # Feedback visual/log: estamos escuchando
+    logger.info("<<< Escuchando orden... >>>")
     
-    # Acción de prueba: abrir apps
-    open_browser_with_urls()
+    # 1. Capturar la orden del usuario
+    command_text = listener.capture_command(timeout=5.0)
     
-    # Log de estado de servicios
-    logger.info(f"Agenda actual eventos: {len(agenda.get_events())}")
+    if not command_text:
+        response = no_command_response()
+        await tts.speak(response)
+        return
+
+    # 2. Enrutar la intención
+    intent, original_text = router.route(command_text)
     
-    # Prueba técnica de Perplexity (Opcional en logs para esta fase)
-    # response = perplexity.test_connection()
-    # logger.info(f"Test Perplexity: {response}")
+    # 3. Ejecutar acción
+    if intent == Intent.GREETING:
+        response = say_hello()
+        await tts.speak(response)
+        
+    elif intent == Intent.OPEN_PERPLEXITY:
+        await tts.speak("Abriendo Perplexity, señor.")
+        open_perplexity()
+        
+    elif intent == Intent.OPEN_YOUTUBE:
+        await tts.speak("Abriendo YouTube, señor.")
+        open_youtube()
+        
+    elif intent == Intent.GENERAL_QUERY:
+        # Consulta real a Perplexity
+        await tts.speak("Consultando con mi motor de búsqueda...")
+        answer = perplexity.query(original_text)
+        await tts.speak(answer)
+    
+    elif intent == Intent.UNKNOWN:
+        response = no_command_response()
+        await tts.speak(response)
 
 def main():
     # 1. Validar configuración
@@ -33,10 +56,10 @@ def main():
         sys.exit(1)
 
     # 2. Inicializar servicios
-    logger.info("--- JARVIS Voice Assistant Iniciado (Fase 1) ---")
+    logger.info("--- JARVIS Voice Assistant (Fase 2: Comando Único) ---")
     
     tts = TTSProvider()
-    agenda = AgendaService()
+    router = IntentRouter()
     perplexity = PerplexityClient()
     listener = VoiceListener()
 
@@ -46,8 +69,8 @@ def main():
 
     # 3. Definir el callback de disparo
     def trigger_callback():
-        # Ejecutar en el bucle de eventos asíncrono
-        asyncio.run(on_trigger(tts, agenda, perplexity))
+        # Ejecutar el flujo de comando en el loop de eventos
+        asyncio.run(on_trigger(listener, tts, router, perplexity))
 
     # 4. Iniciar escucha
     try:
