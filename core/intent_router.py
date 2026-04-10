@@ -10,6 +10,11 @@ class Intent:
     GET_TIME = "get_time"
     GET_DATE = "get_date"
     GET_WEATHER = "get_weather"
+    SHUTDOWN = "shutdown"
+    CANCEL_SHUTDOWN = "cancel_shutdown"
+    GET_RECENT_MEMORY = "get_recent_memory"
+    SEARCH_MEMORY = "search_memory"
+    CHECK_LAST_COMMAND = "check_last_command"
     GENERAL_QUERY = "general_query"
     UNKNOWN = "unknown"
 
@@ -17,7 +22,12 @@ class IntentRouter:
     def __init__(self):
         # Reglas con posibles grupos de captura para extraer nombres de juegos, canciones o ciudades
         self.rules = {
-            Intent.GREETING: [r"hola", r"buenos d[ía]as", r"qu[ée] tal", r"saludos"],
+            Intent.GREETING: [r"hola", r"buenos d[ía]as", r"qu[ée] tal", r"saludos", r"buenas noches"],
+            Intent.SHUTDOWN: [r"apaga el equipo", r"apaga el sistema", r"apaga el ordenador", r"apágate"],
+            Intent.CANCEL_SHUTDOWN: [r"cancela apagado", r"cancela el apagado", r"aborta apagado"],
+            Intent.GET_RECENT_MEMORY: [r"últimas conversaciones", r"qu[ée] hice hoy", r"qu[ée] hicimos hoy"],
+            Intent.CHECK_LAST_COMMAND: [r"último comando", r"lo último que me dijiste", r"qu[ée] fue lo último"],
+            Intent.SEARCH_MEMORY: [r"qu[ée] me dijiste sobre (.+)", r"qu[ée] hablamos de (.+)"],
             Intent.OPEN_PERPLEXITY: [r"abre perplexity", r"abre el buscador"],
             Intent.OPEN_YOUTUBE: [r"abre youtube"],
             Intent.GET_TIME: [r"qu[ée]\s+hora\s+es"],

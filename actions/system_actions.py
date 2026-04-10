@@ -134,12 +134,10 @@ def find_steam_appid(game_name):
     try:
         steam_apps_key = r"Software\Valve\Steam\Apps"
         with winreg.OpenKey(winreg.HKEY_CURRENT_USER, steam_apps_key) as key:
-            # Enumerar subclaves (que son los AppIDs)
             for i in range(winreg.QueryInfoKey(key)[0]):
                 appid = winreg.EnumKey(key, i)
                 try:
                     with winreg.OpenKey(key, appid) as app_key:
-                        # Algunos juegos tienen el valor "Name", otros "name"
                         try:
                             installed_name, _ = winreg.QueryValueEx(app_key, "Name")
                         except FileNotFoundError:
@@ -153,7 +151,7 @@ def find_steam_appid(game_name):
     except Exception as e:
         logger.warning(f"Error buscando en el registro de Steam: {e}")
 
-    # 2. Fallback: Búsqueda en archivos .acf locales (por si el registro está incompleto)
+    # 2. Fallback: Búsqueda en archivos .acf locales
     try:
         import re
         steamapps_path = Config.STEAM_APPS_PATH
@@ -175,6 +173,27 @@ def find_steam_appid(game_name):
     
     return None
 
+def shutdown_computer():
+    """Apaga el ordenador en 10 segundos."""
+    try:
+        # Comando nativo de Windows (apagar en 10 segundos)
+        logger.info("Iniciando secuencia de apagado del sistema (10s)...")
+        subprocess.Popen(["shutdown", "/s", "/t", "10"])
+        return "Entendido, señor. Iniciando secuencia de apagado en diez segundos."
+    except Exception as e:
+        logger.error(f"Error intentando apagar el sistema: {e}")
+        return "Lo siento señor, ha ocurrido un error al intentar apagar el sistema."
+
+def cancel_shutdown():
+    """Cancela un apagado en curso."""
+    try:
+        logger.info("Cancelando apagado del sistema...")
+        subprocess.Popen(["shutdown", "/a"])
+        return "Apagado del sistema cancelado, señor. Modo operativo restaurado."
+    except Exception as e:
+        logger.error(f"Error cancelando el apagado: {e}")
+        return "No se ha podido cancelar el apagado. Quizá no había ninguno en curso."
+
 def say_hello():
     """Acción: Responde con un saludo."""
     return "Hola señor, ¿en qué puedo ayudarle hoy?"
@@ -182,4 +201,6 @@ def say_hello():
 def no_command_response():
     """Acción: Respuesta cuando no se entiende la orden."""
     return "No he podido entender ninguna orden clara, señor."
+
+
 

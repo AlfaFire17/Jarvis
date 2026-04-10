@@ -28,6 +28,8 @@ class Config:
     STEAM_EXE_PATH = r"C:\Program Files (x86)\Steam\steam.exe"
 
     AGENDA_PATH = os.path.join(project_root, "data", "agenda.json")
+    MEMORY_FILE_PATH = os.path.join(project_root, "data", "jarvis_memory.json")
+
     
     # API Keys
     ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
