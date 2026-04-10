@@ -44,4 +44,4 @@ Una vez instalado, simplemente di:
 JARVIS responderá a tu saludo y preparará tu entorno de trabajo inmediatamente.
 
 ---
-*Desarrollado para Pablo por Antigravity.*
+*Desarrollado por Pablo.*
