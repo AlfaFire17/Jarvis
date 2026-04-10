@@ -3,3 +3,5 @@ __pycache__/
 *.mp3
 *.wav
 temp_speech.mp3
+vosk-model-*/
+model.zip
