@@ -62,34 +62,36 @@ def get_weather(city="Manises"):
         return "Ha ocurrido un error al conectar con el servicio meteorológico."
 
 def play_spotify(query):
-    """Busca Y reproduce una canción específica en Spotify."""
-    logger.info(f"Buscando y reproduciendo en Spotify: {query}")
+    """Busca Y reproduce canción en Spotify."""
+    logger.info(f"Reproduciendo en Spotify: {query}")
     
-    # Intentamos por ejecutable directo (más preciso para reproducción automática)
+    # MÉTODO 1: Spotify URI directo con play (funciona en Windows)
+    try:
+        # spotify:search:QUERY:play → busca Y reproduce primer resultado
+        clean_query = query.replace(" ", "%20").replace("'", "")
+        spotify_uri = f"spotify:search:{clean_query}:play"
+        os.startfile(spotify_uri)
+        return f"Reproduciendo {query} en Spotify, señor."
+    except:
+        pass
+    
+    # MÉTODO 2: Spotify.exe directo con query
     spotify_paths = [
-        os.path.join(os.environ["LOCALAPPDATA"], r"Microsoft\WindowsApps\Spotify.exe"),
-        os.path.join(os.environ["APPDATA"], r"Spotify\Spotify.exe")
+        r"C:\Users\pablo\AppData\Roaming\Spotify\Spotify.exe",
+        os.path.join(os.environ["LOCALAPPDATA"], r"Microsoft\WindowsApps\Spotify.exe")
     ]
     
     for path in spotify_paths:
         if os.path.exists(path):
             try:
-                # El argumento --search inicia la búsqueda y frecuentemente la reproducción
-                subprocess.Popen([path, f"--search={query}"])
-                return f"Buscando y reproduciendo {query} en Spotify, señor."
-            except Exception as e:
-                logger.error(f"Error con ejecutable de Spotify: {e}")
+                subprocess.Popen([path, f"--uri=spotify:search:{query}"])
+                return f"Reproduciendo {query} en Spotify, señor."
+            except:
+                pass
     
-    # Fallback: URI con sufijo :play (Método 1 sugerido)
-    try:
-        # Codificación limpia para el protocolo
-        clean_query = query.replace(" ", "%20").replace("'", "")
-        url = f"spotify:search:{clean_query}:play"
-        os.startfile(url)
-        return f"Reproduciendo {query} en Spotify vía protocolo, señor."
-    except Exception as e:
-        logger.error(f"Error lanzando Spotify vía protocolo: {e}")
-        return "Hubo un problema al intentar abrir Spotify."
+    # MÉTODO 3: Fallback básico
+    subprocess.Popen(["start", f"spotify:search:{query.replace(' ', '%20')}"], shell=True)
+    return f"Buscando {query} en Spotify, señor."
 
 
 def launch_steam(game_name=None):
