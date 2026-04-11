@@ -1,0 +1,103 @@
+{
+  "sessions": [
+    {
+      "timestamp": "2026-04-10T23:54:37.685017",
+      "wake_word": "jarvis",
+      "user_input": "agregó dos jugar",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-10T23:54:50.202049",
+      "wake_word": "jarvis",
+      "user_input": "abre god of war",
+      "action_type": "open_steam",
+      "response_text": "Iniciando god of war en Steam, señor. Disfrute.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-10T23:54:59.909693",
+      "wake_word": "jarvis",
+      "user_input": "qué hora es",
+      "action_type": "get_time",
+      "response_text": "Son las 23 y 54, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-10T23:55:31.402180",
+      "wake_word": "jarvis",
+      "user_input": "último comando",
+      "action_type": "check_last_command",
+      "response_text": "El último comando que me ordenó fue 'qué hora es', el cual resultó en la acción 'get_time'.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-10T23:55:54.174840",
+      "wake_word": "jarvis",
+      "user_input": "últimas conversaciones",
+      "action_type": "get_recent_memory",
+      "response_text": "Las últimas interacciones fueron: Usted pidió 'abre god of war' y yo ejecuté la acción 'open_steam'. Usted pidió 'qué hora es' y yo ejecuté la acción 'get_time'. Usted pidió 'último comando' y yo ejecuté la acción 'check_last_command'. ",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-10T23:56:23.237494",
+      "wake_word": "jarvis",
+      "user_input": "apaga el equipo",
+      "action_type": "shutdown",
+      "response_text": "Entendido, señor. Iniciando secuencia de apagado en diez segundos.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T12:48:29.922881",
+      "wake_word": "jarvis",
+      "user_input": "estás ahí",
+      "action_type": "general_query",
+      "response_text": "Afirmativo. Estoy operativo y listo para asistirle.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T12:48:39.642983",
+      "wake_word": "jarvis",
+      "user_input": "abre youtube",
+      "action_type": "open_youtube",
+      "response_text": "Entendido. Abriendo YouTube.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T12:48:59.509244",
+      "wake_word": "jarvis",
+      "user_input": "habrá el buscador",
+      "action_type": "general_query",
+      "response_text": "Sí, puedo acceder a un buscador para obtener información",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T12:49:57.686090",
+      "wake_word": "jarvis",
+      "user_input": "abre el buscador",
+      "action_type": "open_perplexity",
+      "response_text": "Abriendo Perplexity, señor. Siempre es bueno buscar respuestas.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T12:51:04.394870",
+      "wake_word": "jarvis",
+      "user_input": "último comando",
+      "action_type": "check_last_command",
+      "response_text": "El último comando que me ordenó fue 'abre el buscador', el cual resultó en la acción 'open_perplexity'.",
+      "source": "local",
+      "success": true
+    }
+  ]
+}

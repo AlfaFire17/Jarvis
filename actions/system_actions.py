@@ -173,6 +173,34 @@ def find_steam_appid(game_name):
     
     return None
 
+def lock_workstation():
+    """Bloquea el equipo."""
+    import ctypes
+    try:
+        ctypes.windll.user32.LockWorkStation()
+        return "Ordenador bloqueado, señor."
+    except Exception as e:
+        logger.error(f"Error bloqueando: {e}")
+        return "No pude bloquear el equipo."
+
+def open_task_manager():
+    """Abre administrador de tareas."""
+    try:
+        subprocess.Popen(["taskmgr.exe"])
+        return "Abriendo el administrador de tareas, señor."
+    except Exception as e:
+        logger.error(f"Error abriendo taskmgr: {e}")
+        return "Falló la apertura del administrador de tareas."
+
+def open_settings():
+    """Abre configuración de Windows."""
+    try:
+        os.startfile("ms-settings:")
+        return "Abriendo configuración del sistema operativo."
+    except Exception as e:
+        logger.error(f"Error abriendo configuracion: {e}")
+        return "Error al intentar lanzar la configuración interactiva."
+
 def shutdown_computer():
     """Apaga el ordenador en 10 segundos."""
     try:
@@ -201,6 +229,7 @@ def say_hello():
 def no_command_response():
     """Acción: Respuesta cuando no se entiende la orden."""
     return "No he podido entender ninguna orden clara, señor."
+
 
 
 

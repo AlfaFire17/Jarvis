@@ -5,7 +5,12 @@ class Intent:
     GREETING = "greeting"
     OPEN_PERPLEXITY = "open_perplexity"
     OPEN_YOUTUBE = "open_youtube"
-    OPEN_STEAM = "open_steam"
+    OPEN_APP = "open_app"  # Replaces OPEN_STEAM for broader compatibility
+    CLOSE_APP = "close_app"
+    OPEN_FOLDER = "open_folder"
+    SEARCH_FILE = "search_file"
+    OPEN_FILE = "open_file"
+    SYSTEM_ACTION = "system_action"
     PLAY_SPOTIFY = "play_spotify"
     GET_TIME = "get_time"
     GET_DATE = "get_date"
@@ -25,6 +30,7 @@ class IntentRouter:
             Intent.GREETING: [r"hola", r"buenos d[ía]as", r"qu[ée] tal", r"saludos", r"buenas noches"],
             Intent.SHUTDOWN: [r"apaga el equipo", r"apaga el sistema", r"apaga el ordenador", r"apágate"],
             Intent.CANCEL_SHUTDOWN: [r"cancela apagado", r"cancela el apagado", r"aborta apagado"],
+            Intent.SYSTEM_ACTION: [r"bloquea el ordenador", r"abre (?:el )?administrador de tareas", r"abre (?:la )?configuración"],
             Intent.GET_RECENT_MEMORY: [r"últimas conversaciones", r"qu[ée] hice hoy", r"qu[ée] hicimos hoy"],
             Intent.CHECK_LAST_COMMAND: [r"último comando", r"lo último que me dijiste", r"qu[ée] fue lo último"],
             Intent.SEARCH_MEMORY: [r"qu[ée] me dijiste sobre (.+)", r"qu[ée] hablamos de (.+)"],
@@ -34,7 +40,12 @@ class IntentRouter:
             Intent.GET_DATE: [r"qu[ée]\s+d[ía]a\s+es\s+hoy"],
             Intent.GET_WEATHER: [r"clima\s+(.+)"],
             Intent.PLAY_SPOTIFY: [r"pon\s+(.+)"],
-            Intent.OPEN_STEAM: [r"abre steam", r"abre\s+(?!perplexity|youtube)(.+)"],
+            Intent.CLOSE_APP: [r"cierra\s+(.+)"],
+            Intent.OPEN_FOLDER: [r"abre\s+(descargas|documentos|escritorio|im[áa]genes|mis im[áa]genes|la carpeta del proyecto|proyecto|actual|jarvis)(?!.*archivo)(?!.*programa)"],
+            Intent.OPEN_FILE: [r"abre el archivo\s+(.+)"],
+            Intent.SEARCH_FILE: [r"(?:busca(?: el archivo)?|encuentra(?: el archivo)?)\s+(.+)"],
+            # Catch-all para apertura de programas y Steam fallback
+            Intent.OPEN_APP: [r"abre\s+(?!el archivo\b)(?!el ordenador\b)(?!el administrador\b)(?!la configuración\b)(?!youtube\b)(?!perplexity\b)(?!descargas\b)(?!documentos\b)(?!escritorio\b)(?!im[áa]genes\b)(?!mis im[áa]genes\b)(?!proyecto\b)(?!actual\b)(?!jarvis\b)(.+)"],
         }
 
     def route(self, text):
