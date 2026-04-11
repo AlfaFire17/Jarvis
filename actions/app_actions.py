@@ -45,6 +45,12 @@ def open_application(app_name):
     if clean_name == "steam":
         return launch_steam("steam")
 
+    # Limpiar artículos comunes para no fallar el diccionario
+    if clean_name.startswith("el "):
+        clean_name = clean_name[3:]
+    elif clean_name.startswith("la "):
+        clean_name = clean_name[3:]
+
     # Si es conocida en nuestro diccionario de alias locales
     if clean_name in APP_ALIASES:
         target_exe = APP_ALIASES[clean_name]
@@ -52,21 +58,23 @@ def open_application(app_name):
         try:
             # os.startfile respeta el PATH y los alias de Windows nativos
             os.startfile(target_exe)
-            return f"Abriendo {app_name}, señor."
+            return f"Abriendo {clean_name}, señor."
         except Exception as e:
             logger.error(f"Error abriendo nativa ({target_exe}): {e}")
             # Intento de fallback vía terminal oculta (útil para cmd/calculadora antigua)
             try:
                 subprocess.Popen(["start", f"{target_exe}"], shell=True)
-                return f"Abriendo {app_name}, señor."
+                return f"Abriendo {clean_name}, señor."
             except Exception as e2:
                 logger.error(f"Fallback fallido ({target_exe}): {e2}")
-                return f"Ha ocurrido un error intentando abrir {app_name}."
+                return f"Ha ocurrido un error intentando abrir {clean_name}."
 
-    # Si NO está en los alias ni es nativa, delegamos a Steam (Nuestra Fase 4 original 
-    # donde 'abre spiderman' intentaba lanzar un juego de la biblioteca Steam si existía)
-    logger.info(f"Aplicación '{app_name}' desconocida. Redirigiendo a búsqueda en Steam. (Fallback Phase 4)")
-    return launch_steam(clean_name)
+    # Si no tiene alias, podemos intentar adivinar si el usuario quiso abrir un .exe genérico
+    # pero eso es arriesgado. En este diseño, delegamos a Steam por retrocompatibilidad:
+    logger.info(f"Aplicación '{clean_name}' desconocida. Redirigiendo a búsqueda en Steam. (Fallback Phase 4)")
+    # Envolvemos steam para que no diga "Abriendo calculadora en steam" si no lo encuentra.
+    steam_result = launch_steam(clean_name)
+    return steam_result
 
 
 def close_application(app_name):

@@ -98,6 +98,304 @@
       "response_text": "El último comando que me ordenó fue 'abre el buscador', el cual resultó en la acción 'open_perplexity'.",
       "source": "local",
       "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:01:56.523736",
+      "wake_word": "jarvis",
+      "user_input": "voladora",
+      "action_type": "general_query",
+      "response_text": "Se refiere a algo con la capacidad de volar o",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:02:11.983923",
+      "wake_word": "jarvis",
+      "user_input": "abre calculadora",
+      "action_type": "open_steam",
+      "response_text": "No he encontrado calculadora instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:02:33.367650",
+      "wake_word": "jarvis",
+      "user_input": "cierra calculadora",
+      "action_type": "general_query",
+      "response_text": "Cerrando la calculadora. La aplicación ha sido cerrada.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:02:45.914944",
+      "wake_word": "jarvis",
+      "user_input": "abre discord",
+      "action_type": "open_steam",
+      "response_text": "No he encontrado discord instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:03:01.034644",
+      "wake_word": "jarvis",
+      "user_input": "abre el explorador",
+      "action_type": "open_steam",
+      "response_text": "No he encontrado el explorador instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:03:19.198634",
+      "wake_word": "jarvis",
+      "user_input": "pérez descargas",
+      "action_type": "general_query",
+      "response_text": "Para \"Pérez Descargas\",",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:03:28.909212",
+      "wake_word": "jarvis",
+      "user_input": "abre god of war",
+      "action_type": "open_steam",
+      "response_text": "Iniciando god of war en Steam, señor. Disfrute.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:03:49.164853",
+      "wake_word": "jarvis",
+      "user_input": "cierra god of war",
+      "action_type": "general_query",
+      "response_text": "Comprendido. God of War ha sido cerrado.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:04:09.117537",
+      "wake_word": "jarvis",
+      "user_input": "bloquea el ordenador",
+      "action_type": "general_query",
+      "response_text": "Entendido. El acceso al sistema ha sido restringido. Su ordenador está ahora bloqueado.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:05:25.988001",
+      "wake_word": "jarvis",
+      "user_input": "xix",
+      "action_type": "general_query",
+      "response_text": "XIX denota el número die",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:05:58.875553",
+      "wake_word": "jarvis",
+      "user_input": "abre escritorio",
+      "action_type": "open_steam",
+      "response_text": "No he encontrado escritorio instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:10:48.718354",
+      "wake_word": "jarvis",
+      "user_input": "abre el administrador de tareas",
+      "action_type": "open_steam",
+      "response_text": "No he encontrado el administrador de tareas instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:11:54.536434",
+      "wake_word": "jarvis",
+      "user_input": "curadora",
+      "action_type": "general_query",
+      "response_text": "Una curadora es una profesional encargada de gestionar, investigar y",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:12:06.896507",
+      "wake_word": "jarvis",
+      "user_input": "abre calculadora",
+      "action_type": "open_app",
+      "response_text": "Abriendo calculadora, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:12:28.171937",
+      "wake_word": "jarvis",
+      "user_input": "el explorador",
+      "action_type": "general_query",
+      "response_text": "El Explorador de archivos es la interfaz gráfica que",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:13:31.128150",
+      "wake_word": "jarvis",
+      "user_input": "abre descargarse",
+      "action_type": "open_app",
+      "response_text": "No he encontrado descargarse instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:13:41.714636",
+      "wake_word": "jarvis",
+      "user_input": "abre descargas",
+      "action_type": "open_folder",
+      "response_text": "Abriendo la carpeta de descargas, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:13:54.697165",
+      "wake_word": "jarvis",
+      "user_input": "cierra el explorador",
+      "action_type": "close_app",
+      "response_text": "Me temo que no puedo cerrar el explorador, señor. Es un proceso vital del sistema.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:14:09.366877",
+      "wake_word": "jarvis",
+      "user_input": "abre discordia",
+      "action_type": "open_app",
+      "response_text": "No he encontrado discordia instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:14:33.859881",
+      "wake_word": "jarvis",
+      "user_input": "abre anti gravity",
+      "action_type": "open_app",
+      "response_text": "No he encontrado anti gravity instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:15:34.332756",
+      "wake_word": "jarvis",
+      "user_input": "busca el archivo cuentas de oficio",
+      "action_type": "search_file",
+      "response_text": "No he logrado localizar el archivo cuentas de oficio en los directorios habituales.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:15:53.062158",
+      "wake_word": "jarvis",
+      "user_input": "busca el archivo galleta punto te quiste",
+      "action_type": "search_file",
+      "response_text": "No he logrado localizar el archivo galleta punto te quiste en los directorios habituales.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:16:10.098770",
+      "wake_word": "jarvis",
+      "user_input": "busca el archivo galleta",
+      "action_type": "search_file",
+      "response_text": "Encontré un archivo que coincide. Está localizado en la carpeta Desktop.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:16:27.370131",
+      "wake_word": "jarvis",
+      "user_input": "para",
+      "action_type": "general_query",
+      "response_text": "Necesito más contexto para entender su solicitud. ¿Para qué necesita asistencia?",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:20:02.220439",
+      "wake_word": "jarvis",
+      "user_input": "abre spotify",
+      "action_type": "open_app",
+      "response_text": "Abriendo spotify, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:20:16.235693",
+      "wake_word": "jarvis",
+      "user_input": "abre obedece",
+      "action_type": "open_app",
+      "response_text": "No he encontrado obedece instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:20:27.379624",
+      "wake_word": "jarvis",
+      "user_input": "abre filmó hora",
+      "action_type": "open_app",
+      "response_text": "No he encontrado filmó hora instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:20:39.129792",
+      "wake_word": "jarvis",
+      "user_input": "abre worth",
+      "action_type": "open_app",
+      "response_text": "No he encontrado worth instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:20:49.711414",
+      "wake_word": "jarvis",
+      "user_input": "abre word",
+      "action_type": "open_app",
+      "response_text": "Iniciando word en Steam, señor. Disfrute.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T13:21:12.783674",
+      "wake_word": "jarvis",
+      "user_input": "abre ain't",
+      "action_type": "open_app",
+      "response_text": "No he encontrado ain't instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T17:31:11.262138",
+      "wake_word": "jarvis",
+      "user_input": "qué tal",
+      "action_type": "greeting",
+      "response_text": "Hola señor, ¿en qué puedo ayudarle hoy?",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T17:31:56.402421",
+      "wake_word": "jarvis",
+      "user_input": "abre el buscador",
+      "action_type": "open_perplexity",
+      "response_text": "Abriendo Perplexity, señor. Siempre es bueno buscar respuestas.",
+      "source": "local",
+      "success": true
+    }
+  ],
+  "scheduled_events": [
+    {
+      "id": "5a8260fa",
+      "type": "temporizador",
+      "message": "test",
+      "trigger_time": 1775922673.4222405,
+      "status": "pending",
+      "created_at": 1775922613.4222405
     }
   ]
 }

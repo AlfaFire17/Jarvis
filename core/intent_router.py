@@ -21,6 +21,12 @@ class Intent:
     SEARCH_MEMORY = "search_memory"
     CHECK_LAST_COMMAND = "check_last_command"
     GENERAL_QUERY = "general_query"
+    CREATE_TIMER = "create_timer"
+    CREATE_REMINDER = "create_reminder"
+    CREATE_ALARM = "create_alarm"
+    CANCEL_EVENT = "cancel_event"
+    LIST_EVENTS = "list_events"
+    TIME_REMAINING = "time_remaining"
     UNKNOWN = "unknown"
 
 class IntentRouter:
@@ -40,6 +46,12 @@ class IntentRouter:
             Intent.GET_DATE: [r"qu[ée]\s+d[ía]a\s+es\s+hoy"],
             Intent.GET_WEATHER: [r"clima\s+(.+)"],
             Intent.PLAY_SPOTIFY: [r"pon\s+(.+)"],
+            Intent.CREATE_ALARM: [r"pon(?: una)? alarma(?: para)? las (\d{1,2})[.:](\d{2})"],
+            Intent.CREATE_TIMER: [r"pon(?: un)? temporizador(?: de)? (\d+) (minuto|minutos|hora|horas)(?:.*)?"],
+            Intent.CREATE_REMINDER: [r"(?:recuérdame|avísame)(?:\s+que)?\s+(.+)\s+(?:en|para dentro de)\s+(\d+)\s+(minuto|minutos|hora|horas)"],
+            Intent.CANCEL_EVENT: [r"(?:cancela|para|borra)\s+(?:el |la )?(temporizador|alarma|recordatorio)(?:\s+de\s+(.+))?"],
+            Intent.LIST_EVENTS: [r"qué alarmas tengo", r"lista de recordatorios", r"qué eventos tengo", r"cuántos recordatorios"],
+            Intent.TIME_REMAINING: [r"cuánto(?: tiempo)? queda"],
             Intent.CLOSE_APP: [r"cierra\s+(.+)"],
             Intent.OPEN_FOLDER: [r"abre\s+(descargas|documentos|escritorio|im[áa]genes|mis im[áa]genes|la carpeta del proyecto|proyecto|actual|jarvis)(?!.*archivo)(?!.*programa)"],
             Intent.OPEN_FILE: [r"abre el archivo\s+(.+)"],
@@ -60,8 +72,14 @@ class IntentRouter:
             for pattern in patterns:
                 match = re.search(pattern, text)
                 if match:
-                    # Si hay un grupo de captura, lo extraemos como payload
-                    payload = match.group(1) if match.groups() else None
+                    # Si hay grupos de captura, extraerlos como payload
+                    if not match.groups():
+                        payload = None
+                    elif len(match.groups()) == 1:
+                        payload = match.group(1)
+                    else:
+                        payload = match.groups()
+                        
                     logger.info(f"Intención detectada: {intent} (Payload: {payload})")
                     return intent, payload
 

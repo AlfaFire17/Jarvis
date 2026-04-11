@@ -17,23 +17,34 @@ class MemoryService:
 
     def load_memory(self):
         """Carga el JSON de memoria o lo crea si no existe/está corrupto."""
+        default_structure = {"sessions": [], "scheduled_events": []}
+        
         if not os.path.exists(self.file_path):
             logger.info("Archivo de memoria no encontrado. Inicializando memoria nueva.")
-            return {"sessions": []}
+            return default_structure
 
         try:
             with open(self.file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
+                dirty = False
                 if "sessions" not in data:
                     logger.warning("Estructura JSON inválida. Regenerando 'sessions'.")
                     data["sessions"] = []
+                    dirty = True
+                if "scheduled_events" not in data:
+                    logger.info("Añadiendo tabla 'scheduled_events' al JSON heredado.")
+                    data["scheduled_events"] = []
+                    dirty = True
+                
+                # Opcional: limpiar eventos anticuados / disparados / cancelados masivos si hace falta
+                
                 return data
         except json.JSONDecodeError:
             logger.error("Archivo de memoria corrupto. Creando uno nuevo de forma segura.")
-            return {"sessions": []}
+            return default_structure
         except Exception as e:
             logger.error(f"Error cargando memoria JSON: {e}")
-            return {"sessions": []}
+            return default_structure
 
     def _save_memory(self):
         """Guarda el JSON de forma atómica usando un archivo .tmp para no corromper datos."""
@@ -104,3 +115,28 @@ class MemoryService:
             
         ultimo = sessions[-1]
         return f"El último comando que me ordenó fue '{ultimo['user_input']}', el cual resultó en la acción '{ultimo['action_type']}'."
+
+    # --- FUNCIONES DE SCHEDULING (Fase 8) ---
+    def get_scheduled_events(self):
+        """Devuelve la lista actual de eventos programados (alarmas/recordatorios)."""
+        return self.memory.get("scheduled_events", [])
+
+    def add_scheduled_event(self, event_dict):
+        """Añade un nuevo evento validando la estructura básica."""
+        if "scheduled_events" not in self.memory:
+            self.memory["scheduled_events"] = []
+            
+        self.memory["scheduled_events"].append(event_dict)
+        self._save_memory()
+        
+    def update_event_status(self, event_id, new_status):
+        """Actualiza el estado de un evento (e.g., 'pending' -> 'triggered' o 'cancelled')."""
+        events = self.memory.get("scheduled_events", [])
+        for e in events:
+            if e.get("id") == event_id:
+                e["status"] = new_status
+                logger.info(f"Evento {event_id} marcado como {new_status}")
+                self._save_memory()
+                return True
+        return False
+

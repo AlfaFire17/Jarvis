@@ -15,8 +15,13 @@ from actions.system_actions import (
 )
 from actions.app_actions import open_application, close_application
 from actions.file_actions import open_user_folder, find_and_report_file, find_and_open_file
+from actions.reminder_actions import (
+    create_timer, create_alarm, create_reminder,
+    cancel_matching_events, list_pending_events, get_time_remaining
+)
 from integrations.gemini_client import GeminiClient
 from services.memory_service import MemoryService
+from services.scheduler_service import JARVIScheduler
 
 # Import the new GUI components
 from core.gui_controller import JARVISGUIController
@@ -82,6 +87,35 @@ async def on_trigger(listener, tts, router, gemini, gui, memory):
 
     elif intent == Intent.OPEN_FILE:
         response = find_and_open_file(payload)
+        
+    elif intent == Intent.CREATE_TIMER:
+        dur = payload[0] if isinstance(payload, tuple) else payload
+        unit = payload[1] if isinstance(payload, tuple) and len(payload)>1 else "minutos"
+        label = payload[2] if isinstance(payload, tuple) and len(payload)>2 else None
+        response = create_timer(memory, dur, unit, label)
+        
+    elif intent == Intent.CREATE_ALARM:
+        if isinstance(payload, tuple) and len(payload) >= 2:
+            response = create_alarm(memory, payload[0], payload[1])
+        else:
+            response = "Lo siento, no he entendido la hora para la alarma."
+            
+    elif intent == Intent.CREATE_REMINDER:
+        if isinstance(payload, tuple) and len(payload) >= 3:
+            response = create_reminder(memory, payload[0], payload[1], payload[2])
+        else:
+            response = "Lo siento, me faltan datos para establecer el recordatorio."
+            
+    elif intent == Intent.CANCEL_EVENT:
+        ev_type = payload[0] if isinstance(payload, tuple) else payload
+        query_val = payload[1] if isinstance(payload, tuple) and len(payload)>1 else None
+        response = cancel_matching_events(memory, ev_type, query_val)
+        
+    elif intent == Intent.LIST_EVENTS:
+        response = list_pending_events(memory)
+        
+    elif intent == Intent.TIME_REMAINING:
+        response = get_time_remaining(memory)
 
     elif intent == Intent.GET_RECENT_MEMORY:
         response = memory.get_recent_interactions(limit=3)
@@ -153,7 +187,7 @@ def main():
 
     app = QApplication(sys.argv)
 
-    logger.info("--- JARVIS Voice Assistant (Fase 7: Desktop Control) ---")
+    logger.info("--- JARVIS Voice Assistant (Fase 8: Reminders & Alerts) ---")
     
     tts = TTSProvider()
     router = IntentRouter()
@@ -167,6 +201,9 @@ def main():
 
     gui_controller = JARVISGUIController()
     overlay = JARVISOverlay(gui_controller)
+    
+    scheduler = JARVIScheduler(memory, gui_controller, tts)
+    scheduler.start_monitor()
 
     voice_thread = threading.Thread(
         target=run_voice_loop,
@@ -175,7 +212,7 @@ def main():
     )
     voice_thread.start()
 
-    logger.info("JARVIS GUI, Memoria y sistema de voz iniciados. Esperando comando...")
+    logger.info("JARVIS GUI, Memoria, Planificador y sistema de voz iniciados. Esperando comando...")
     sys.exit(app.exec())
 
 if __name__ == "__main__":
