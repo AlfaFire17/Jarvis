@@ -25,6 +25,7 @@ class JARVISOverlay(QWidget):
         self.controller.set_responding.connect(self.on_responding)
         self.controller.set_muted.connect(self.on_muted)
         self.controller.set_conversation_mode.connect(self.on_conversation)
+        self.controller.set_analyzing.connect(self.on_analyzing)
 
         # Timer para animación
         self.anim_timer = QTimer(self)
@@ -100,6 +101,13 @@ class JARVISOverlay(QWidget):
         self.text_display = "Conversación activa..."
         self.show()
 
+    @Slot(str)
+    def on_analyzing(self, text):
+        self.state = "analyzing"
+        self.target_opacity = 0.9
+        self.text_display = text if text else "Analizando pantalla..."
+        self.show()
+
     def auto_fade_out(self):
         if self.state == "responding":
             self.on_idle()
@@ -138,6 +146,10 @@ class JARVISOverlay(QWidget):
         elif self.state == "listening":
             center_color = QColor(255, 180, 0, int(240 * self.opacity))
             mid_color = QColor(255, 80, 0, int(150 * self.opacity))
+        elif self.state == "analyzing":
+            # Verde esmeralda para visión
+            center_color = QColor(0, 255, 120, int(200 * self.opacity))
+            mid_color = QColor(0, 180, 80, int(100 * self.opacity))
 
         rect = self.rect()
         center = rect.center()

@@ -935,6 +935,69 @@
       "response_text": "Modo conversación finalizado, señor.",
       "source": "local",
       "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:30:51.761085",
+      "wake_word": "jarvis",
+      "user_input": "buenos días",
+      "action_type": "greeting",
+      "response_text": "Hola señor, ¿en qué puedo ayudarle hoy?",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:30:58.661798",
+      "wake_word": "jarvis",
+      "user_input": "quién fue tu creador",
+      "action_type": "general_query",
+      "response_text": "Fui creado por Pablo Soriano, con asistencia de Perplexity.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:31:12.573725",
+      "wake_word": "jarvis",
+      "user_input": "puedes abrir mastín",
+      "action_type": "general_query",
+      "response_text": "No tengo la capacidad de abrir aplicaciones directamente en tu",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:31:21.710301",
+      "wake_word": "jarvis",
+      "user_input": "abre sting",
+      "action_type": "open_app",
+      "response_text": "No he encontrado sting instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:31:34.280631",
+      "wake_word": "jarvis",
+      "user_input": "pon antes de que cuenta diez",
+      "action_type": "play_spotify",
+      "response_text": "Reproduciendo antes de que cuenta diez en Spotify, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:31:43.196200",
+      "wake_word": "jarvis",
+      "user_input": "que",
+      "action_type": "general_query",
+      "response_text": "Necesito más información para poder asistirte. Por",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:31:53.529221",
+      "wake_word": "jarvis",
+      "user_input": "gracias jarvis",
+      "action_type": "conversation_stop",
+      "response_text": "Modo conversación finalizado, señor.",
+      "source": "local",
+      "success": true
     }
   ],
   "scheduled_events": [

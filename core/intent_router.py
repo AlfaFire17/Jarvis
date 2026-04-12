@@ -32,6 +32,12 @@ class Intent:
     QUERY_MEMORY = "query_memory"
     DELETE_MEMORY = "delete_memory"
     IDENTITY = "identity"
+    SCREEN_ANALYZE = "screen_analyze"
+    SCREEN_READ = "screen_read"
+    SCREEN_ERROR = "screen_error"
+    ACTIVE_WINDOW = "active_window"
+    COPY_SCREEN = "copy_screen"
+    VISUAL_FOLLOWUP = "visual_followup"
     UNKNOWN = "unknown"
 
 class IntentRouter:
@@ -63,6 +69,13 @@ class IntentRouter:
             Intent.TIME_REMAINING: [r"cuánto(?: tiempo)? queda"],
             # -- Conversación: patrones explícitos y específicos --
             Intent.CONVERSATION_STOP: [r"sal del modo conversación", r"^silencio$", r"^ya está$", r"gracias jarvis"],
+            # -- Visión de pantalla (Fase 10) --
+            Intent.SCREEN_ERROR: [r"ayúdame con (?:este|el) error", r"qué (?:significa|es) (?:este|ese) (?:error|fallo|mensaje)", r"explícame (?:este|ese) (?:error|stack|fallo)"],
+            Intent.ACTIVE_WINDOW: [r"qué ventana tengo (?:abierta|activa)", r"ventana actual"],
+            Intent.COPY_SCREEN: [r"copia (?:el )?texto (?:visible|de (?:la |esta )?pantalla)", r"guarda (?:el )?texto de (?:esta|la) pantalla"],
+            Intent.SCREEN_READ: [r"lee (?:la |esta )?(?:pantalla|ventana)", r"qué (?:pone|dice) (?:en |aquí|la )(?:pantalla)?", r"léeme (?:esto|la pantalla)"],
+            Intent.SCREEN_ANALYZE: [r"analiza (?:la |esta )?pantalla", r"qué (?:hay|ves) en (?:la )?pantalla", r"qué ves", r"resume (?:la |esta )?pantalla", r"resume (?:esto|este texto)"],
+            Intent.VISUAL_FOLLOWUP: [r"explícam?elo", r"tradúcelo", r"resúmelo", r"qué (?:tengo|debo) (?:que )?hacer"],
             # -- Memoria persistente --
             Intent.SAVE_MEMORY: [r"(?:recuerda|guarda|no olvides)(?:\s+que)?\s+(.+)"],
             Intent.QUERY_MEMORY: [r"(?:qué recuerdas de mí|cómo me llamo|qué sabes sobre.*)"],

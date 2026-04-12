@@ -20,18 +20,23 @@ from actions.reminder_actions import (
     cancel_matching_events, list_pending_events, get_time_remaining
 )
 from actions.memory_actions import remember_fact, forget_fact, query_profile
+from actions.vision_actions import (
+    analyze_current_screen, read_screen_text, summarize_screen,
+    explain_screen_error, get_active_window_info, copy_visible_text, followup_visual
+)
 from integrations.gemini_client import GeminiClient
 from services.memory_service import MemoryService
 from services.scheduler_service import JARVIScheduler
 from services.conversation_manager import ConversationManager
 from services.hotkey_service import JARVISHotkeyManager
+from services.vision_service import VisionService
 
 # Import the GUI components
 from core.gui_controller import JARVISGUIController
 from gui.overlay import JARVISOverlay
 
 
-async def process_command(command_text, listener, tts, router, gemini, gui, memory, conv_manager):
+async def process_command(command_text, listener, tts, router, gemini, gui, memory, conv_manager, vision):
     """Procesa un comando (ya sea desde wake word o follow-up)."""
     gui.set_transcription.emit(command_text)
 
@@ -159,6 +164,30 @@ async def process_command(command_text, listener, tts, router, gemini, gui, memo
     elif intent == Intent.GET_WEATHER:
         response = get_weather(payload) if payload else get_weather()
 
+    # --- Fase 10: Visión de pantalla ---
+    elif intent == Intent.SCREEN_ANALYZE:
+        gui.set_analyzing.emit("Analizando pantalla...")
+        response = analyze_current_screen(vision)
+
+    elif intent == Intent.SCREEN_READ:
+        gui.set_analyzing.emit("Leyendo texto en pantalla...")
+        response = read_screen_text(vision)
+
+    elif intent == Intent.SCREEN_ERROR:
+        gui.set_analyzing.emit("Analizando error en pantalla...")
+        response = explain_screen_error(vision)
+
+    elif intent == Intent.ACTIVE_WINDOW:
+        response = get_active_window_info(vision)
+
+    elif intent == Intent.COPY_SCREEN:
+        gui.set_analyzing.emit("Copiando texto visible...")
+        response = copy_visible_text(vision)
+
+    elif intent == Intent.VISUAL_FOLLOWUP:
+        gui.set_analyzing.emit("Analizando contexto visual...")
+        response = followup_visual(vision, command_text)
+
     elif intent == Intent.GENERAL_QUERY:
         source = "gemini"
         gui.set_responding.emit("Procesando...")
@@ -191,20 +220,18 @@ async def process_command(command_text, listener, tts, router, gemini, gui, memo
             gui.set_conversation_mode.emit()
 
 
-async def on_trigger(listener, tts, router, gemini, gui, memory, conv_manager, pre_captured_text=None):
+async def on_trigger(listener, tts, router, gemini, gui, memory, conv_manager, vision, pre_captured_text=None):
     """Acciones a realizar cuando se detecta el wake word o un follow-up."""
 
     if pre_captured_text:
-        # Follow-up: ya tenemos el texto, no necesitamos escuchar de nuevo
         logger.info(f"Procesando follow-up: '{pre_captured_text}'")
-        await process_command(pre_captured_text, listener, tts, router, gemini, gui, memory, conv_manager)
+        await process_command(pre_captured_text, listener, tts, router, gemini, gui, memory, conv_manager, vision)
         return
 
     # Activación normal por wake word
     logger.info("Protocolo JARVIS: Activado.")
     gui.set_wake.emit()
 
-    # Breve respuesta de activación
     conv_manager.set_speaking(True)
     await tts.speak("Sí, señor.")
     conv_manager.set_speaking(False)
@@ -222,12 +249,12 @@ async def on_trigger(listener, tts, router, gemini, gui, memory, conv_manager, p
         conv_manager.set_speaking(False)
         return
 
-    await process_command(command_text, listener, tts, router, gemini, gui, memory, conv_manager)
+    await process_command(command_text, listener, tts, router, gemini, gui, memory, conv_manager, vision)
 
 
-def run_voice_loop(listener, tts, router, gemini, gui, memory, conv_manager):
+def run_voice_loop(listener, tts, router, gemini, gui, memory, conv_manager, vision):
     def trigger_callback(pre_captured_text=None):
-        asyncio.run(on_trigger(listener, tts, router, gemini, gui, memory, conv_manager, pre_captured_text))
+        asyncio.run(on_trigger(listener, tts, router, gemini, gui, memory, conv_manager, vision, pre_captured_text))
 
     try:
         listener.listen(trigger_callback, conv_manager=conv_manager)
@@ -242,7 +269,7 @@ def main():
 
     app = QApplication(sys.argv)
 
-    logger.info("--- JARVIS Voice Assistant (Fase 9: Hybrid Conversation) ---")
+    logger.info("--- JARVIS Voice Assistant (Fase 10: Screen Vision) ---")
 
     tts = TTSProvider()
     router = IntentRouter()
@@ -266,14 +293,17 @@ def main():
     hotkey_manager = JARVISHotkeyManager(conv_manager)
     hotkey_manager.start()
 
+    # Fase 10: Vision Service
+    vision = VisionService(gemini_client=gemini)
+
     voice_thread = threading.Thread(
         target=run_voice_loop,
-        args=(listener, tts, router, gemini, gui_controller, memory, conv_manager),
+        args=(listener, tts, router, gemini, gui_controller, memory, conv_manager, vision),
         daemon=True
     )
     voice_thread.start()
 
-    logger.info("JARVIS GUI, Memoria, Planificador, Conversación Híbrida y Hotkeys iniciados. Esperando comando...")
+    logger.info("JARVIS completo: GUI, Memoria, Planificador, Conversación, Hotkeys y Visión. Esperando comando...")
     sys.exit(app.exec())
 
 
