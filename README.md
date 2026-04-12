@@ -1,47 +1,68 @@
-# 🤖 JARVIS - Asistente Personal de Inteligencia Artificial
+# 🤖 JARVIS - Asistente Virtual Multimodal (Fase 11)
 
-Este es un asistente inspirado en JARVIS de Iron Man, diseñado específicamente para **Pablo**. El sistema escucha de forma continua y reacciona a comandos de voz para automatizar la rutina diaria.
+JARVIS es un asistente personal de vanguardia inspirado en el universo de Iron Man, diseñado específicamente para la productividad y el gaming de **Pablo Soriano**. Combina inteligencia artificial local, visión de pantalla y automatización avanzada de Windows en una interfaz elegante y minimalista.
 
-## 🚀 Funcionalidades Principales
+## 🚀 Capacidades Destacadas
 
-- **Activación por Voz (Wake Word)**: Responde a la frase *"Jarvis, ¿estás ahí?"* utilizando el motor de reconocimiento **Vosk (Offline)**.
-- **Respuesta de Voz Premium**: Integración con **edge-tts** (voz de Álvaro) y soporte para **ElevenLabs** para una experiencia de voz masculina, grave y realista.
-- **Automatización de Navegador**: Al activarse, JARVIS abre automáticamente **Opera GX** con pestañas preconfiguradas (Perplexity AI y YouTube).
-- **Persistencia y Auto-inicio**: Configurado para iniciarse automáticamente con Windows y funcionar de forma totalmente silenciosa en segundo plano.
-- **Privacidad Total**: El reconocimiento de voz se realiza de forma local sin enviar audio a la nube.
+- **🧠 Cerebro Híbrido (Ollama + Gemini)**:
+  - IA Local como núcleo principal usando modelos como `Llama3 (8B)` y `Phi3`.
+  - Funcionamiento 100% privado y sin cuotas por uso.
+  - Fallback inteligente a la nube (Gemini) en caso de fallos locales.
+  
+- **🎮 Perfiles de Rendimiento (Gaming Ready)**:
+  - **Modo Gaming**: Descarga automática del modelo de la VRAM para priorizar el rendimiento en juegos.
+  - **Modo Equilibrado**: Balance entre velocidad y consumo.
+  - **Modo Rápido**: Respuestas instantáneas con el modelo siempre en memoria.
 
-## 📂 Estructura del Proyecto
+- **👁️ Visión de Pantalla (Screen Vision)**:
+  - Análisis en tiempo real de lo que ves en el monitor.
+  - Explicación de errores de código, resumen de ventanas y lectura de texto (OCR contextual).
+  - Soporte para preguntas de seguimiento sobre el contexto visual.
+
+- **🎙️ Voz y Sonido Premium**:
+  - Voz masculina, grave y profesional asistida por **ElevenLabs** y **Edge-TTS**.
+  - Reconocimiento de voz local continuo ("Jarvis").
+  - Modo conversación fluido sin necesidad de repetir la palabra de activación.
+
+- **🛠️ Automatización del Sistema**:
+  - Control total de **Spotify**, **Steam**, **YouTube** y aplicaciones de Windows.
+  - Gestión de archivos, carpetas y búsqueda inteligente.
+  - Sistema de recordatorios, alarmas y temporizadores con persistencia.
+  - Memoria a largo plazo sobre el usuario y sus preferencias.
+
+- **🖥️ Interfaz HUD Iron Man**:
+  - Overlay flotante con indicadores de estado, backend de IA y modo de rendimiento.
+  - Efectos visuales dinámicos (Glow naranja, cian, verde esmeralda).
+
+## 📂 Estructura de la Arquitectura
 
 ```text
 Jarvis/
-├── jarvis.py                # Núcleo del asistente (Lógica de voz y automatización)
-├── start_jarvis.vbs         # Lanzador silencioso para segundo plano
-├── .env                     # Configuración de API Keys y rutas
-├── vosk-model-.../          # Modelo de lenguaje para reconocimiento offline
-└── OpenJarvis/              # Repositorio base de OpenJarvis
+├── actions/         # Scripts de interacción (Apps, Archivos, Visión, LLM)
+├── core/            # Núcleo: Configuración, Router de Intenciones, GUI Controller
+├── data/            # Memoria persistente y Agenda (JSON)
+├── gui/             # Interfaz visual PySide6 (Overlay animado)
+├── integrations/    # Clientes API (Gemini, Ollama, ElevenLabs)
+├── services/        # Lógica de fondo (Memoria, Scheduler, Visión, Performance)
+├── voice/           # Motor de audio: Listener (Vosk) y TTS
+└── jarvis.py        # Punto de entrada principal
 ```
 
-## 🛠️ Requisitos e Instalación
+## 🛠️ Requisitos Técnicos
 
-1. **Python 3.11+**
-2. **Librerías Necesarias**:
-   ```bash
-   pip install sounddevice numpy edge-tts pygame python-dotenv elevenlabs vosk
-   ```
-3. **Navegador**: Opera GX (configurable en el archivo `.env`).
+- **Hardware Recomendado**: GPU NVIDIA (RTX 3070+ para Llama3), 16GB+ RAM.
+- **Dependencias**:
+  - Python 3.11+
+  - [Ollama](https://ollama.com/) (para IA Local).
+  - PySide6, mss, pywin32, edge-tts, elevenlabs, vosk, pygame.
 
-## ⚙️ Configuración (.env)
+## 🖱️ Comandos de Ejemplo
 
-El archivo `.env` debe contener las siguientes variables:
-- `OPERA_PATH`: Ruta al ejecutable de Opera GX.
-- `ELEVENLABS_API_KEY`: Tu llave de API de ElevenLabs (Opcional, fallback a edge-tts).
-
-## 🖱️ Uso
-
-Una vez instalado, simplemente di:  
-> **"Jarvis, ¿estás ahí?"**
-
-JARVIS responderá a tu saludo y preparará tu entorno de trabajo inmediatamente.
+- *"Jarvis, ¿qué ves en mi pantalla?"*
+- *"Activa el modo gaming"*
+- *"Pon la lista de reproducción de Rock en Spotify"*
+- *"Recuérdame sacar la basura en 10 minutos"*
+- *"Busca el archivo de balance anual"*
 
 ---
-*Desarrollado por Pablo.*
+*Desarrollado con ❤️ por **Pablo Soriano**, con la asistencia de Perplexity y la estética de las Industrias Stark.*
