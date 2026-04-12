@@ -11,3 +11,7 @@ class JARVISGUIController(QObject):
     set_listening = Signal()
     set_transcription = Signal(str)
     set_responding = Signal(str)
+    
+    # Señales Fase 9 (Conversación y Mute)
+    set_muted = Signal()
+    set_conversation_mode = Signal()

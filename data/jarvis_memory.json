@@ -386,6 +386,384 @@
       "response_text": "Abriendo Perplexity, señor. Siempre es bueno buscar respuestas.",
       "source": "local",
       "success": true
+    },
+    {
+      "timestamp": "2026-04-11T17:54:39.421843",
+      "wake_word": "jarvis",
+      "user_input": "pon un temporizador de un minuto",
+      "action_type": "play_spotify",
+      "response_text": "Reproduciendo un temporizador de un minuto en Spotify, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T17:56:09.026974",
+      "wake_word": "jarvis",
+      "user_input": "pon un temporizador de un minuto",
+      "action_type": "play_spotify",
+      "response_text": "Reproduciendo un temporizador de un minuto en Spotify, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T17:56:59.539423",
+      "wake_word": "jarvis",
+      "user_input": "recuérdame que beba agua en un minuto",
+      "action_type": "general_query",
+      "response_text": "Entendido. Estableceré un recordatorio para que beba agua en un minuto. Esté atento a la notificación.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T17:57:27.582430",
+      "wake_word": "jarvis",
+      "user_input": "que a dar más tengo",
+      "action_type": "general_query",
+      "response_text": "\"Tengo\" es una palabra en español que",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T17:57:49.672690",
+      "wake_word": "jarvis",
+      "user_input": "recuérdame que beba agua en un minuto",
+      "action_type": "general_query",
+      "response_text": "Recordatorio establecido. En un minuto, le instaré a hidratarse.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T17:58:15.428919",
+      "wake_word": "jarvis",
+      "user_input": "que alarmas tengo",
+      "action_type": "general_query",
+      "response_text": "No tengo acceso directo a la configuración de alarm",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T17:58:31.431215",
+      "wake_word": "jarvis",
+      "user_input": "lista de recordatorios",
+      "action_type": "list_events",
+      "response_text": "Actualmente no tiene ningún evento pendiente en su agenda, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T17:59:33.523800",
+      "wake_word": "jarvis",
+      "user_input": "con una alarma para las dieciocho cero cero",
+      "action_type": "general_query",
+      "response_text": "Alarma configurada. Sonará a las",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T18:00:26.397539",
+      "wake_word": "jarvis",
+      "user_input": "que alarmas tengo",
+      "action_type": "general_query",
+      "response_text": "Para consultar sus alarmas activas, necesito",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T18:11:59.243891",
+      "wake_word": "jarvis",
+      "user_input": "habrá youtube",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T18:12:10.831433",
+      "wake_word": "jarvis",
+      "user_input": "abre youtube",
+      "action_type": "open_youtube",
+      "response_text": "Entendido. Abriendo YouTube.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T18:12:30.452892",
+      "wake_word": "jarvis",
+      "user_input": "habrá este hm",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T18:12:42.224468",
+      "wake_word": "jarvis",
+      "user_input": "abre god of war",
+      "action_type": "open_app",
+      "response_text": "Iniciando god of war en Steam, señor. Disfrute.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T18:13:02.971509",
+      "wake_word": "jarvis",
+      "user_input": "quién fue campeón del último mundial de fútbol",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T18:13:18.593191",
+      "wake_word": "jarvis",
+      "user_input": "y te un límite de uso diario",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T18:13:32.760689",
+      "wake_word": "jarvis",
+      "user_input": "si ya lo ves jarvis buenos días",
+      "action_type": "greeting",
+      "response_text": "Hola señor, ¿en qué puedo ayudarle hoy?",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T18:13:44.249713",
+      "wake_word": "jarvis",
+      "user_input": "buenas noches",
+      "action_type": "greeting",
+      "response_text": "Buenas noches, señor. Que descanse.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T18:14:41.229258",
+      "wake_word": "jarvis",
+      "user_input": "gate",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T18:14:57.151865",
+      "wake_word": "jarvis",
+      "user_input": "apaga te",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T18:15:09.207990",
+      "wake_word": "jarvis",
+      "user_input": "apaga el equipo",
+      "action_type": "shutdown",
+      "response_text": "Entendido, señor. Iniciando secuencia de apagado en diez segundos.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T23:09:32.442948",
+      "wake_word": "jarvis",
+      "user_input": "buenos días",
+      "action_type": "greeting",
+      "response_text": "Hola señor, ¿en qué puedo ayudarle hoy?",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T23:09:47.073675",
+      "wake_word": "jarvis",
+      "user_input": "buenos días",
+      "action_type": "greeting",
+      "response_text": "Hola señor, ¿en qué puedo ayudarle hoy?",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T23:09:56.686694",
+      "wake_word": "jarvis",
+      "user_input": "abre youtube",
+      "action_type": "open_youtube",
+      "response_text": "Entendido. Abriendo YouTube.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T23:10:12.313009",
+      "wake_word": "jarvis",
+      "user_input": "hola jarvis",
+      "action_type": "greeting",
+      "response_text": "Hola señor, ¿en qué puedo ayudarle hoy?",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T23:10:37.388454",
+      "wake_word": "jarvis",
+      "user_input": "abrigo de humor",
+      "action_type": "general_query",
+      "response_text": "Un abrigo de humor es una prenda conceptual que busca reflejar el estado emocional del usuario. Utiliza tecnologías como sensores biométricos o materiales termocrómicos para cambiar su color o patrón. Su diseño permite una expresión visual y dinámica de los sentimientos internos.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T23:11:17.344187",
+      "wake_word": "jarvis",
+      "user_input": "jarvis",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T23:11:31.962081",
+      "wake_word": "jarvis",
+      "user_input": "ah",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T23:12:01.914266",
+      "wake_word": "jarvis",
+      "user_input": "abre godo word",
+      "action_type": "open_app",
+      "response_text": "No he encontrado godo word instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T23:12:28.834843",
+      "wake_word": "jarvis",
+      "user_input": "abre god of war",
+      "action_type": "open_app",
+      "response_text": "Iniciando god of war en Steam, señor. Disfrute.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T23:13:01.985447",
+      "wake_word": "jarvis",
+      "user_input": "abre descargas",
+      "action_type": "open_folder",
+      "response_text": "Abriendo la carpeta de descargas, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T23:13:16.871572",
+      "wake_word": "jarvis",
+      "user_input": "vale puedo decir que quede después preguntarle cosas",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T23:13:41.416453",
+      "wake_word": "jarvis",
+      "user_input": "quién ha sido el último ganador de la eurocopa",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T23:14:17.977437",
+      "wake_word": "jarvis",
+      "user_input": "pon antes de que cuenta diez",
+      "action_type": "play_spotify",
+      "response_text": "Reproduciendo antes de que cuenta diez en Spotify, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T23:15:10.302012",
+      "wake_word": "jarvis",
+      "user_input": "nada jarvis",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T23:15:29.586106",
+      "wake_word": "jarvis",
+      "user_input": "últimas conversaciones",
+      "action_type": "get_recent_memory",
+      "response_text": "Las últimas interacciones fueron: Usted pidió 'quién ha sido el último ganador de la eurocopa' y yo ejecuté la acción 'general_query'. Usted pidió 'pon antes de que cuenta diez' y yo ejecuté la acción 'play_spotify'. Usted pidió 'nada jarvis' y yo ejecuté la acción 'general_query'. ",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T23:16:18.489894",
+      "wake_word": "jarvis",
+      "user_input": "abre el buscador",
+      "action_type": "open_perplexity",
+      "response_text": "Abriendo Perplexity, señor. Siempre es bueno buscar respuestas.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-11T23:17:18.884412",
+      "wake_word": "jarvis",
+      "user_input": "eres mi amigo",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T23:17:45.703782",
+      "wake_word": "jarvis",
+      "user_input": "apaga te",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T23:18:04.432093",
+      "wake_word": "jarvis",
+      "user_input": "apaga te",
+      "action_type": "general_query",
+      "response_text": "Ha ocurrido un error en mi núcleo de procesamiento, señor. Por favor, reintente en unos instantes.",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-11T23:18:19.310712",
+      "wake_word": "jarvis",
+      "user_input": "apaga el sistema",
+      "action_type": "shutdown",
+      "response_text": "Entendido, señor. Iniciando secuencia de apagado en diez segundos.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T15:40:37.854457",
+      "wake_word": "jarvis",
+      "user_input": "buenos días",
+      "action_type": "greeting",
+      "response_text": "Hola señor, ¿en qué puedo ayudarle hoy?",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T15:40:53.388648",
+      "wake_word": "jarvis",
+      "user_input": "habrá youtube",
+      "action_type": "general_query",
+      "response_text": "Afirmativo. YouTube es una",
+      "source": "gemini",
+      "success": true
     }
   ],
   "scheduled_events": [
@@ -394,8 +772,11 @@
       "type": "temporizador",
       "message": "test",
       "trigger_time": 1775922673.4222405,
-      "status": "pending",
+      "status": "triggered",
       "created_at": 1775922613.4222405
     }
-  ]
+  ],
+  "persistent_profile_memory": {
+    "facts": []
+  }
 }

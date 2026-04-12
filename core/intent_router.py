@@ -27,6 +27,10 @@ class Intent:
     CANCEL_EVENT = "cancel_event"
     LIST_EVENTS = "list_events"
     TIME_REMAINING = "time_remaining"
+    CONVERSATION_STOP = "conversation_stop"
+    SAVE_MEMORY = "save_memory"
+    QUERY_MEMORY = "query_memory"
+    DELETE_MEMORY = "delete_memory"
     UNKNOWN = "unknown"
 
 class IntentRouter:
@@ -45,13 +49,23 @@ class IntentRouter:
             Intent.GET_TIME: [r"qu[ée]\s+hora\s+es"],
             Intent.GET_DATE: [r"qu[ée]\s+d[ía]a\s+es\s+hoy"],
             Intent.GET_WEATHER: [r"clima\s+(.+)"],
-            Intent.PLAY_SPOTIFY: [r"pon\s+(.+)"],
+            # -- Alarmas y temporizadores ANTES de Spotify/memoria para evitar colisiones con "pon" --
             Intent.CREATE_ALARM: [r"pon(?: una)? alarma(?: para)? las (\d{1,2})[.:](\d{2})"],
             Intent.CREATE_TIMER: [r"pon(?: un)? temporizador(?: de)? (\d+) (minuto|minutos|hora|horas)(?:.*)?"],
+            Intent.PLAY_SPOTIFY: [r"pon\s+(.+)"],
+            # -- Recordatorios temporales ANTES de memoria persistente genérica --
             Intent.CREATE_REMINDER: [r"(?:recuérdame|avísame)(?:\s+que)?\s+(.+)\s+(?:en|para dentro de)\s+(\d+)\s+(minuto|minutos|hora|horas)"],
+            # -- Cancelación de eventos ANTES de CONVERSATION_STOP para evitar que "para el temporizador" se confunda --
             Intent.CANCEL_EVENT: [r"(?:cancela|para|borra)\s+(?:el |la )?(temporizador|alarma|recordatorio)(?:\s+de\s+(.+))?"],
             Intent.LIST_EVENTS: [r"qué alarmas tengo", r"lista de recordatorios", r"qué eventos tengo", r"cuántos recordatorios"],
             Intent.TIME_REMAINING: [r"cuánto(?: tiempo)? queda"],
+            # -- Conversación: patrones explícitos y específicos --
+            Intent.CONVERSATION_STOP: [r"sal del modo conversación", r"^silencio$", r"^ya está$", r"gracias jarvis"],
+            # -- Memoria persistente --
+            Intent.SAVE_MEMORY: [r"(?:recuerda|guarda|no olvides)(?:\s+que)?\s+(.+)"],
+            Intent.QUERY_MEMORY: [r"(?:qué recuerdas de mí|cómo me llamo|qué sabes sobre.*)"],
+            Intent.DELETE_MEMORY: [r"(?:olvida|borra)(?:\s+que)?\s+(.+)"],
+            # -- Apps y archivos --
             Intent.CLOSE_APP: [r"cierra\s+(.+)"],
             Intent.OPEN_FOLDER: [r"abre\s+(descargas|documentos|escritorio|im[áa]genes|mis im[áa]genes|la carpeta del proyecto|proyecto|actual|jarvis)(?!.*archivo)(?!.*programa)"],
             Intent.OPEN_FILE: [r"abre el archivo\s+(.+)"],

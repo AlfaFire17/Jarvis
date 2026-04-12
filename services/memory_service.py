@@ -17,7 +17,13 @@ class MemoryService:
 
     def load_memory(self):
         """Carga el JSON de memoria o lo crea si no existe/está corrupto."""
-        default_structure = {"sessions": [], "scheduled_events": []}
+        default_structure = {
+            "sessions": [], 
+            "scheduled_events": [],
+            "persistent_profile_memory": {
+                "facts": []
+            }
+        }
         
         if not os.path.exists(self.file_path):
             logger.info("Archivo de memoria no encontrado. Inicializando memoria nueva.")
@@ -34,6 +40,13 @@ class MemoryService:
                 if "scheduled_events" not in data:
                     logger.info("Añadiendo tabla 'scheduled_events' al JSON heredado.")
                     data["scheduled_events"] = []
+                    dirty = True
+                if "persistent_profile_memory" not in data:
+                    logger.info("Añadiendo perfil persistente al JSON heredado.")
+                    data["persistent_profile_memory"] = {"facts": []}
+                    dirty = True
+                if "facts" not in data.get("persistent_profile_memory", {}):
+                    data["persistent_profile_memory"] = {"facts": []}
                     dirty = True
                 
                 # Opcional: limpiar eventos anticuados / disparados / cancelados masivos si hace falta
@@ -139,4 +152,50 @@ class MemoryService:
                 self._save_memory()
                 return True
         return False
+
+    # --- FUNCIONES DE PERFIL PERSISTENTE (Fase 9) ---
+    def save_fact(self, fact_text):
+        """Guarda un nuevo hecho en la memoria persistente."""
+        import uuid
+        fact_id = "mem_" + uuid.uuid4().hex[:8]
+        fact_entry = {
+            "id": fact_id,
+            "value": fact_text,
+            "created_at": datetime.now().isoformat()
+        }
+        
+        profile = self.memory.setdefault("persistent_profile_memory", {"facts": []})
+        facts = profile.setdefault("facts", [])
+        facts.append(fact_entry)
+        self._save_memory()
+        return True
+        
+    def delete_fact(self, keyword):
+        """Borra hechos que coincidan con la keyword."""
+        profile = self.memory.get("persistent_profile_memory", {})
+        facts = profile.get("facts", [])
+        
+        clean_key = keyword.lower().strip()
+        new_facts = [f for f in facts if clean_key not in f.get("value", "").lower()]
+        
+        deleted_count = len(facts) - len(new_facts)
+        if deleted_count > 0:
+            profile["facts"] = new_facts
+            self._save_memory()
+        
+        return deleted_count
+
+    def get_profile_summary(self):
+        """Devuelve un string con todos los hechos persistentes almacenados."""
+        profile = self.memory.get("persistent_profile_memory", {})
+        facts = profile.get("facts", [])
+        
+        if not facts:
+            return "Aún no me ha pedido que memorice ningún dato sobre usted, señor."
+            
+        resumen = "Esto es lo que recuerdo sobre usted: "
+        for f in facts:
+            resumen += f"{f['value']}. "
+            
+        return resumen
 

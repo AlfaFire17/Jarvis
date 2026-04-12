@@ -93,15 +93,38 @@ class VoiceListener:
         logger.warning("Timeout agotado sin detectar orden.")
         return ""
 
-    def listen(self, trigger_callback):
-        """Bucle principal de escucha de wake word."""
+    def listen(self, trigger_callback, conv_manager=None):
+        """Bucle principal híbrido de escucha de wake word o conversación abierta."""
         logger.info(f"Escuchando wake word: \"{Config.WAKE_PHRASE}\"")
+        import time
         
         try:
             with sd.InputStream(samplerate=Config.FS, device=None, dtype='float32',
                                   channels=Config.CHANNELS, callback=self.callback):
                 while True:
                     data = self.q.get()
+                    
+                    if conv_manager:
+                        if conv_manager.is_speaking or conv_manager.is_muted:
+                            while not self.q.empty():
+                                self.q.get()
+                            time.sleep(0.01)
+                            continue
+
+                        # Si estamos en modo conversación, escuchamos y disparamos comandos directamente
+                        if conv_manager.is_conversation_active() and not self.is_processing:
+                            if self.command_rec.AcceptWaveform(data):
+                                result = json.loads(self.command_rec.Result())
+                                text = result.get("text", "")
+                                if text:
+                                    self.is_processing = True
+                                    logger.info(f"Follow-up detectado: '{text}'")
+                                    conv_manager.reset_activity_timer()
+                                    trigger_callback(pre_captured_text=text)
+                                    self.is_processing = False
+                            continue
+                            
+                    # Flujo estándar: Esperando Wake Word
                     if self.wake_rec.AcceptWaveform(data):
                         result = json.loads(self.wake_rec.Result())
                         text = result.get("text", "")
@@ -109,6 +132,8 @@ class VoiceListener:
                         if Config.WAKE_PHRASE in text and not self.is_processing:
                             self.is_processing = True
                             logger.info("Wake word detectado!")
+                            if conv_manager:
+                                conv_manager.start_conversation()
                             trigger_callback()
                             self.is_processing = False
         except KeyboardInterrupt:

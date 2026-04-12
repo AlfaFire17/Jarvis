@@ -1,147 +1,166 @@
 import os
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QApplication
-from PySide6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QTimer, Slot, Property
-from PySide6.QtGui import QPainter, QColor, QPen, QRadialGradient, QFont
+from PySide6.QtCore import Qt, QPropertyAnimation, QTimer, Slot
+from PySide6.QtGui import QPainter, QColor, QRadialGradient, QFont, QBrush
 
 class JARVISOverlay(QWidget):
     def __init__(self, controller):
         super().__init__()
-        
-        # Conectar las señales del controlador a los métodos (Slots)
         self.controller = controller
-        self.controller.set_idle.connect(self.set_state_idle)
-        self.controller.set_wake.connect(self.set_state_wake)
-        self.controller.set_listening.connect(self.set_state_listening)
-        self.controller.set_transcription.connect(self.set_state_transcription)
-        self.controller.set_responding.connect(self.set_state_responding)
+        
+        # Geometría inicial
+        self.setGeometry(100, 100, 400, 400)
+        
+        # Estados internos Visuales
+        self.opacity = 0.0
+        self.target_opacity = 0.0
+        self.state = "idle"
+        self.text_display = ""
+
+        # Conectar señales del nuevo controlador
+        self.controller.set_idle.connect(self.on_idle)
+        self.controller.set_wake.connect(self.on_wake)
+        self.controller.set_listening.connect(self.on_listening)
+        self.controller.set_transcription.connect(self.on_transcription)
+        self.controller.set_responding.connect(self.on_responding)
+        self.controller.set_muted.connect(self.on_muted)
+        self.controller.set_conversation_mode.connect(self.on_conversation)
+
+        # Timer para animación
+        self.anim_timer = QTimer(self)
+        self.anim_timer.timeout.connect(self.animate)
+        self.anim_timer.start(16) # ~60 fps
         
         self.init_ui()
 
     def init_ui(self):
-        # Propiedades de la ventana: Frameless, Always on Top, Tool (no taskbar)
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Tool)
-        # Transparente, no roba click
-        self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setAttribute(Qt.WA_TransparentForMouseEvents)
+        # Propiedades de la ventana: Frameless, Always on Top, Tool (no taskbar, transparente)
+        self.setWindowFlags(
+            Qt.WindowType.WindowStaysOnTopHint |
+            Qt.WindowType.FramelessWindowHint |
+            Qt.WindowType.Tool |
+            Qt.WindowType.WindowTransparentForInput
+        )
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.moveToBottomRight()
 
-        # Tamaño y posición
-        screen = QApplication.primaryScreen().geometry()
-        width = 400
-        height = 150
-        # Esquina inferior derecha:
-        self.setGeometry(screen.width() - width - 50, screen.height() - height - 80, width, height)
+    def moveToBottomRight(self):
+        screen = QApplication.primaryScreen()
+        size = screen.size()
+        margin_x = 50
+        margin_y = 100
+        x = size.width() - self.width() - margin_x
+        y = size.height() - self.height() - margin_y
+        self.move(x, y)
 
-        # Layout
-        self.layout = QVBoxLayout()
-        self.layout.setAlignment(Qt.AlignBottom | Qt.AlignCenter)
-        self.setLayout(self.layout)
+    # ---------- Slots de cambio de estado ----------
+    @Slot()
+    def on_idle(self):
+        self.state = "idle"
+        self.target_opacity = 0.0
 
-        # Etiqueta principal (transcripción)
-        self.label = QLabel("")
-        self.label.setAlignment(Qt.AlignCenter)
-        self.label.setWordWrap(True)
-        self.label.setStyleSheet("""
-            QLabel {
-                color: #FF8800;
-                font-family: 'Segoe UI', Arial, sans-serif;
-                font-size: 16px;
-                font-weight: 600;
-                background-color: rgba(0, 0, 0, 160);
-                padding: 10px;
-                border-radius: 10px;
-                border: 1px solid rgba(255, 136, 0, 100);
-            }
-        """)
-        self.layout.addWidget(self.label)
-        self.label.hide()
-
-        # Variable de estado para controlar el pintado del círculo
-        self.is_active = False
-
-        # Animación de opacidad para el fade-in / fade-out
-        self.opacity_anim = QPropertyAnimation(self, b"windowOpacity")
-        self.opacity_anim.setDuration(300)
-        self.opacity_anim.setEasingCurve(QEasingCurve.InOutQuad)
+    @Slot()
+    def on_wake(self):
+        self.state = "wake"
+        self.target_opacity = 0.9
+        self.text_display = ""
+        self.show()
         
-        # Iniciar oculto
-        self.setWindowOpacity(0.0)
+    @Slot()
+    def on_listening(self):
+        self.state = "listening"
+        self.target_opacity = 1.0
+        self.text_display = "Escuchando..."
+        self.show()
 
-    # El evento paintEvent dibuja el círculo naranja cuando está activo
+    @Slot(str)
+    def on_transcription(self, text):
+        self.text_display = text
+        
+    @Slot(str)
+    def on_responding(self, text):
+        self.state = "responding"
+        self.text_display = text if len(text) < 150 else text[:147] + "..."
+        self.target_opacity = 1.0
+        # Timer para apagar la UI después de un mensaje si no salta el modo conversacion
+        QTimer.singleShot(6000, self.auto_fade_out)
+        self.show()
+        
+    @Slot()
+    def on_muted(self):
+        self.state = "muted"
+        self.target_opacity = 0.7
+        self.text_display = "[MUTED]"
+        self.show()
+        
+    @Slot()
+    def on_conversation(self):
+        self.state = "conversing"
+        self.target_opacity = 0.8
+        self.text_display = "Conversación activa..."
+        self.show()
+
+    def auto_fade_out(self):
+        if self.state == "responding":
+            self.on_idle()
+
+    def animate(self):
+        # Suavizar transición de opacidad real (60fps lerp)
+        diff = self.target_opacity - self.opacity
+        if abs(diff) > 0.01:
+            self.opacity += diff * 0.1
+            self.update()
+        else:
+            self.opacity = self.target_opacity
+            if self.opacity > 0 or self.state != "idle":
+                self.update()
+
     def paintEvent(self, event):
-        if not self.is_active:
+        if self.opacity <= 0.01:
             return
 
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
-        # Configurar gradiente del círculo
-        center = self.rect().center()
-        # Dibujamos un poco más arriba de la etiqueta
-        center.setY(center.y() - 20)
-        radius = 25
+        # Configuración de colores
+        center_color = QColor(255, 120, 0, int(200 * self.opacity))
+        mid_color = QColor(255, 50, 0, int(100 * self.opacity))
+        glow_color = QColor(255, 0, 0, 0)
+        font_color = QColor(255, 255, 255, int(255 * self.opacity))
+        
+        if self.state == "muted":
+            center_color = QColor(150, 0, 0, int(180 * self.opacity))
+            mid_color = QColor(80, 0, 0, int(90 * self.opacity))
+            font_color = QColor(200, 200, 200, int(255 * self.opacity))
+        elif self.state == "conversing":
+            center_color = QColor(0, 200, 255, int(180 * self.opacity))
+            mid_color = QColor(0, 100, 200, int(90 * self.opacity))
+        elif self.state == "listening":
+            center_color = QColor(255, 180, 0, int(240 * self.opacity))
+            mid_color = QColor(255, 80, 0, int(150 * self.opacity))
+
+        rect = self.rect()
+        center = rect.center()
+        radius = min(rect.width(), rect.height()) / 2.5
 
         gradient = QRadialGradient(center, radius)
-        gradient.setColorAt(0, QColor(255, 200, 50, 255))
-        gradient.setColorAt(0.7, QColor(255, 136, 0, 200))
-        gradient.setColorAt(1, QColor(255, 136, 0, 0))
+        gradient.setColorAt(0.0, center_color)
+        gradient.setColorAt(0.5, mid_color)
+        gradient.setColorAt(1.0, glow_color)
 
-        painter.setBrush(gradient)
-        painter.setPen(Qt.NoPen)
-        # Dibujamos el halo
-        painter.drawEllipse(center, radius + 15, radius + 15)
+        painter.setBrush(QBrush(gradient))
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.drawRect(rect)
 
-        # Círculo sólido interior
-        painter.setBrush(QColor(255, 136, 0, 255))
-        painter.drawEllipse(center, radius, radius)
-        
+        # Dibujar Texto debajo del HUD
+        if self.text_display:
+            font = QFont("Arial", 14, QFont.Weight.Bold)
+            painter.setFont(font)
+            painter.setPen(font_color)
+            text_rect = rect.adjusted(0, int(rect.height() * 0.7), 0, 0)
+            painter.drawText(
+                text_rect,
+                int(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.TextWordWrap),
+                self.text_display
+            )
         painter.end()
-
-    @Slot()
-    def fade_in(self):
-        self.show()
-        self.opacity_anim.setStartValue(self.windowOpacity())
-        self.opacity_anim.setEndValue(1.0)
-        self.opacity_anim.start()
-
-    @Slot()
-    def fade_out(self):
-        self.opacity_anim.setStartValue(self.windowOpacity())
-        self.opacity_anim.setEndValue(0.0)
-        self.opacity_anim.start()
-        # Al finalizar, la ventana sigue existiendo pero con opacidad 0
-
-    @Slot()
-    def set_state_idle(self):
-        self.is_active = False
-        self.label.hide()
-        self.update() # Llama al paintEvent para borrar el círculo
-        self.fade_out()
-
-    @Slot()
-    def set_state_wake(self):
-        self.is_active = True
-        self.label.setText("JARVIS")
-        self.label.setStyleSheet("color: #FF8800; font-size: 18px; font-weight: bold;")
-        self.label.show()
-        self.update()
-        self.fade_in()
-
-    @Slot()
-    def set_state_listening(self):
-        self.label.setText("Escuchando orden...")
-        self.label.setStyleSheet("color: #FFDDAA; font-style: italic; font-size: 16px;")
-
-    @Slot(str)
-    def set_state_transcription(self, text):
-        self.label.setText(f'"{text}"')
-        self.label.setStyleSheet("color: #FFFFFF; font-size: 16px;")
-
-    @Slot(str)
-    def set_state_responding(self, text):
-        # Truncar visualmente si es muy largo para la UI
-        display_text = text if len(text) < 150 else text[:147] + "..."
-        self.label.setText(display_text)
-        self.label.setStyleSheet("color: #FFCC88; font-size: 16px;")
-        
-        # Schedule idle state after 5 seconds to show the response before hiding
-        QTimer.singleShot(5000, self.set_state_idle)
