@@ -30,13 +30,16 @@ from services.scheduler_service import JARVIScheduler
 from services.conversation_manager import ConversationManager
 from services.hotkey_service import JARVISHotkeyManager
 from services.vision_service import VisionService
+from services.llm_service import LLMService
+from services.performance_manager import PerformanceManager
+from actions.llm_actions import set_performance_profile, set_llm_backend, unload_model, get_llm_status
 
 # Import the GUI components
 from core.gui_controller import JARVISGUIController
 from gui.overlay import JARVISOverlay
 
 
-async def process_command(command_text, listener, tts, router, gemini, gui, memory, conv_manager, vision):
+async def process_command(command_text, listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager):
     """Procesa un comando (ya sea desde wake word o follow-up)."""
     gui.set_transcription.emit(command_text)
 
@@ -192,12 +195,31 @@ async def process_command(command_text, listener, tts, router, gemini, gui, memo
         gui.set_analyzing.emit("Analizando contexto visual...")
         response = followup_visual(vision, command_text)
 
+    # --- Fase 11: IA Local y Rendimiento ---
+    elif intent == Intent.SET_PERFORMANCE:
+        response = set_performance_profile(perf_manager, llm_service, payload)
+        gui.set_status_text.emit(f"Modo: {perf_manager.profile}")
+
+    elif intent == Intent.SET_BACKEND:
+        response = set_llm_backend(llm_service, payload)
+
+    elif intent == Intent.UNLOAD_MODEL:
+        response = unload_model(llm_service)
+
+    elif intent == Intent.LLM_STATUS:
+        response = get_llm_status(llm_service, perf_manager)
+
     elif intent == Intent.GENERAL_QUERY:
-        source = "gemini"
-        gui.set_responding.emit("Procesando...")
-        answer = gemini.ask(payload)
+        source = llm_service.backend
+        gui.set_responding.emit("Pensando...")
+        
+        # Inyectar contexto visual si existe (opcional para mejorar respuesta)
+        v_text, v_window = vision.get_last_context()
+        v_context = f"El usuario está viendo {v_window}: {v_text}" if v_text else None
+        
+        answer = llm_service.ask(command_text, vision_context=v_context)
         response = answer
-        if "Lo siento" in answer or "ocurrido un error" in answer:
+        if "Lo siento" in answer or "ERROR_CONNECTION" in answer:
             success = False
 
     elif intent == Intent.UNKNOWN:
@@ -229,7 +251,7 @@ async def on_trigger(listener, tts, router, gemini, gui, memory, conv_manager, v
 
     if pre_captured_text:
         logger.info(f"Procesando follow-up: '{pre_captured_text}'")
-        await process_command(pre_captured_text, listener, tts, router, gemini, gui, memory, conv_manager, vision)
+        await process_command(pre_captured_text, listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager)
         return
 
     # Activación normal por wake word
@@ -253,12 +275,12 @@ async def on_trigger(listener, tts, router, gemini, gui, memory, conv_manager, v
         conv_manager.set_speaking(False)
         return
 
-    await process_command(command_text, listener, tts, router, gemini, gui, memory, conv_manager, vision)
+    await process_command(command_text, listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager)
 
 
-def run_voice_loop(listener, tts, router, gemini, gui, memory, conv_manager, vision):
+def run_voice_loop(listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager):
     def trigger_callback(pre_captured_text=None):
-        asyncio.run(on_trigger(listener, tts, router, gemini, gui, memory, conv_manager, vision, pre_captured_text))
+        asyncio.run(on_trigger(listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager, pre_captured_text))
 
     try:
         listener.listen(trigger_callback, conv_manager=conv_manager)
@@ -299,10 +321,18 @@ def main():
 
     # Fase 10: Vision Service
     vision = VisionService(gemini_client=gemini)
+    
+    # Fase 11: IA Local y Rendimientos
+    perf_manager = PerformanceManager()
+    llm_service = LLMService(perf_manager)
+    
+    # Emitir estado inicial a la GUI
+    gui_controller.set_status_text.emit(f"AI: {llm_service.backend.upper()}")
+    gui_controller.set_perf_status.emit(f"Modo: {perf_manager.profile.upper()}")
 
     voice_thread = threading.Thread(
         target=run_voice_loop,
-        args=(listener, tts, router, gemini, gui_controller, memory, conv_manager, vision),
+        args=(listener, tts, router, llm_service, gui_controller, memory, conv_manager, vision, perf_manager),
         daemon=True
     )
     voice_thread.start()

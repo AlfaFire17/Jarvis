@@ -39,6 +39,10 @@ class Intent:
     ACTIVE_WINDOW = "active_window"
     COPY_SCREEN = "copy_screen"
     VISUAL_FOLLOWUP = "visual_followup"
+    SET_PERFORMANCE = "set_performance"
+    SET_BACKEND = "set_backend"
+    UNLOAD_MODEL = "unload_model"
+    LLM_STATUS = "llm_status"
     UNKNOWN = "unknown"
 
 class IntentRouter:
@@ -68,6 +72,12 @@ class IntentRouter:
             Intent.SCREEN_READ: [r"lee (?:la |esta |mi |tu )?(?:pantalla|ventana)", r"que (?:pone|dice) (?:en |aqui|la |mi |tu )(?:pantalla)?", r"leeme (?:esto|la pantalla|la ventana)"],
             Intent.SCREEN_ANALYZE: [r"analiza (?:la |esta |mi |tu )?pantalla", r"que (?:hay|ves) (?:en |a traves de )?(?:la |esta |mi |tu )?pantalla", r"que ves", r"resume (?:la |esta |mi |tu )?pantalla", r"resume (?:esto|este texto)"],
             Intent.VISUAL_FOLLOWUP: [r"explicamelo", r"traducelo", r"resumelo", r"que (?:tengo|debo) (?:que )?hacer"],
+            
+            # -- IA Local y Rendimiento (Fase 11) --
+            Intent.SET_PERFORMANCE: [r"activa (?:el )?modo (gaming|equilibrado|rapido|ahorro)", r"pon modo (gaming|equilibrado|rapido|ahorro)"],
+            Intent.SET_BACKEND: [r"usa (?:el )?backend (local|nube|ollama|gemini)", r"cambia a (?:ia |backend )?(local|nube|ollama|gemini)"],
+            Intent.UNLOAD_MODEL: [r"libera (?:la )?memoria", r"descarga el modelo"],
+            Intent.LLM_STATUS: [r"que (?:modelo|backend|modo de rendimiento) estas usando", r"estado de la ia", r"quien es tu cerebro"],
             
             # 5. Comandos Locales y Consultas Básicas
             Intent.GREETING: [r"hola", r"buenos dias", r"que tal", r"saludos", r"buenas noches"],

@@ -35,6 +35,13 @@ class Config:
     ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
     OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
+
+    # Ollama & LLM Settings (Fase 11)
+    OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
+    OLLAMA_MODEL_DEFAULT = os.getenv("OLLAMA_MODEL_DEFAULT", "llama3:8b")
+    OLLAMA_MODEL_GAMING = os.getenv("OLLAMA_MODEL_GAMING", "phi3:mini")
+    DEFAULT_LLM_BACKEND = "ollama"  # "ollama" o "gemini"
+    DEFAULT_PERFORMANCE_PROFILE = "balanced"  # "gaming", "balanced", "fast"
     
     # Triggers
     WAKE_PHRASE = "jarvis"

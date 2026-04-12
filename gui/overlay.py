@@ -16,6 +16,8 @@ class JARVISOverlay(QWidget):
         self.target_opacity = 0.0
         self.state = "idle"
         self.text_display = ""
+        self.status_display = ""
+        self.perf_display = ""
 
         # Conectar señales del nuevo controlador
         self.controller.set_idle.connect(self.on_idle)
@@ -26,6 +28,8 @@ class JARVISOverlay(QWidget):
         self.controller.set_muted.connect(self.on_muted)
         self.controller.set_conversation_mode.connect(self.on_conversation)
         self.controller.set_analyzing.connect(self.on_analyzing)
+        self.controller.set_status_text.connect(self.on_status_text)
+        self.controller.set_perf_status.connect(self.on_perf_status)
 
         # Timer para animación
         self.anim_timer = QTimer(self)
@@ -108,6 +112,16 @@ class JARVISOverlay(QWidget):
         self.text_display = text if text else "Analizando pantalla..."
         self.show()
 
+    @Slot(str)
+    def on_status_text(self, text):
+        self.status_display = text
+        self.update()
+
+    @Slot(str)
+    def on_perf_status(self, text):
+        self.perf_display = text
+        self.update()
+
     def auto_fade_out(self):
         if self.state == "responding":
             self.on_idle()
@@ -175,4 +189,17 @@ class JARVISOverlay(QWidget):
                 int(Qt.AlignmentFlag.AlignCenter | Qt.TextFlag.TextWordWrap),
                 self.text_display
             )
+            
+        # Dibujar Status e IA (Fase 11) - Esquina inferior derecha
+        if self.status_display or self.perf_display:
+            font_small = QFont("Arial", 10, QFont.Weight.Normal)
+            painter.setFont(font_small)
+            painter.setPen(QColor(255, 255, 255, int(150 * self.opacity)))
+            info_text = f"{self.status_display} | {self.perf_display}"
+            painter.drawText(
+                rect.adjusted(0, 0, -10, -10),
+                int(Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight),
+                info_text
+            )
+
         painter.end()

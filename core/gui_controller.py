@@ -18,3 +18,7 @@ class JARVISGUIController(QObject):
     
     # Señal Fase 10 (Visión)
     set_analyzing = Signal(str)
+    
+    # Señal Fase 11 (IA y Rendimiento)
+    set_status_text = Signal(str)
+    set_perf_status = Signal(str)
