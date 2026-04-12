@@ -63,14 +63,15 @@ class VisionService:
         Captura la pantalla y la analiza con Gemini Vision.
         Si se proporciona una pregunta, se contextualiza.
         """
+        window_title = self.get_active_window_title()
+        logger.info(f"Capturando ventana activa: {window_title}...")
+        
         img = self.capture_screen()
         if img is None:
             return "No he podido capturar la pantalla, señor."
 
         if not self.gemini or not self.gemini.model:
             return "Mi motor de análisis visual no está disponible en este momento."
-
-        window_title = self.session_context["last_window_title"]
 
         # Construir prompt contextual
         if question:
@@ -97,16 +98,20 @@ class VisionService:
             ])
 
             if response and response.candidates and response.candidates[0].content.parts:
+                logger.info("Analisis visual (OCR) completado con exito.")
                 result_text = self.gemini._clean_text(response.text)
                 self.session_context["last_screen_text"] = result_text
                 self.session_context["last_visual_summary"] = result_text
+                logger.info("Contexto visual de sesion actualizado.")
                 return result_text
             else:
+                logger.warning("Gemini no devolvio contenido visual valido.")
                 return "No he podido interpretar lo que aparece en pantalla."
 
         except Exception as e:
-            logger.error(f"Error en análisis visual Gemini: {e}")
+            logger.error(f"Error en analisis visual Gemini: {e}")
             return "Ha ocurrido un error analizando la pantalla, señor."
+
 
     def read_screen_text(self):
         """Captura y extrae el texto visible en pantalla."""

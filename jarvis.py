@@ -167,15 +167,18 @@ async def process_command(command_text, listener, tts, router, gemini, gui, memo
     # --- Fase 10: Visión de pantalla ---
     elif intent == Intent.SCREEN_ANALYZE:
         gui.set_analyzing.emit("Analizando pantalla...")
-        response = analyze_current_screen(vision)
+        res = analyze_current_screen(vision)
+        response = res if res else "No he podido analizar la pantalla correctamente, señor."
 
     elif intent == Intent.SCREEN_READ:
         gui.set_analyzing.emit("Leyendo texto en pantalla...")
-        response = read_screen_text(vision)
+        res = read_screen_text(vision)
+        response = res if res else "No he detectado texto legible en la pantalla."
 
     elif intent == Intent.SCREEN_ERROR:
         gui.set_analyzing.emit("Analizando error en pantalla...")
-        response = explain_screen_error(vision)
+        res = explain_screen_error(vision)
+        response = res if res else "No he podido identificar ningún error evidente en la pantalla."
 
     elif intent == Intent.ACTIVE_WINDOW:
         response = get_active_window_info(vision)
@@ -183,6 +186,7 @@ async def process_command(command_text, listener, tts, router, gemini, gui, memo
     elif intent == Intent.COPY_SCREEN:
         gui.set_analyzing.emit("Copiando texto visible...")
         response = copy_visible_text(vision)
+
 
     elif intent == Intent.VISUAL_FOLLOWUP:
         gui.set_analyzing.emit("Analizando contexto visual...")

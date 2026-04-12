@@ -46,21 +46,36 @@ class TTSProvider:
             return False
 
     def speak_elevenlabs(self, text):
-        """Genera y reproduce voz usando ElevenLabs."""
+        """Genera y reproduce voz usando ElevenLabs (API v1.x)."""
         if not Config.ELEVENLABS_API_KEY:
             return False
             
         try:
+            from elevenlabs.client import ElevenLabs
             client = ElevenLabs(api_key=Config.ELEVENLABS_API_KEY)
-            audio = client.generate(text=text, voice=Config.VOICE_ID, model="eleven_multilingual_v2")
+            
+            # Llamada al API v1.x: text_to_speech.convert
+            response = client.text_to_speech.convert(
+                text=text,
+                voice_id=Config.VOICE_ID,
+                model_id="eleven_multilingual_v2",
+                output_format="mp3_44100_128"
+            )
+            
             output_file = os.path.join(self.script_dir, "temp_speech_eleven.mp3")
+            
+            # El resultado es un generador de bytes
             with open(output_file, "wb") as f:
-                for chunk in audio:
-                    f.write(chunk)
-            self.play_audio(output_file)
-            return True
+                for chunk in response:
+                    if chunk:
+                        f.write(chunk)
+            
+            if os.path.exists(output_file) and os.path.getsize(output_file) > 0:
+                self.play_audio(output_file)
+                return True
+            return False
         except Exception as e:
-            logger.error(f"Error con ElevenLabs: {e}")
+            logger.warning(f"Fallo en ElevenLabs: {e}. Usando fallback...")
             return False
 
     async def speak(self, text):

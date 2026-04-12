@@ -998,6 +998,105 @@
       "response_text": "Modo conversación finalizado, señor.",
       "source": "local",
       "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:42:13.024177",
+      "wake_word": "jarvis",
+      "user_input": "que va en la pantalla",
+      "action_type": "general_query",
+      "response_text": "En la pantalla se visualizan datos",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:42:25.797960",
+      "wake_word": "jarvis",
+      "user_input": "que ves en pantalla",
+      "action_type": "general_query",
+      "response_text": "Como asistente de inteligencia artificial, no tengo la capacidad de ver lo que aparece en tu pantalla. Mi función es procesar información y responder a tus comandos de voz o texto.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:43:02.806162",
+      "wake_word": "jarvis",
+      "user_input": "que ves en pantalla",
+      "action_type": "general_query",
+      "response_text": "Como inteligencia artificial, no tengo la capacidad de ver ni acceder a ninguna pantalla. Mi función es procesar y generar texto basándome en la información que me proporcionas.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:43:31.731112",
+      "wake_word": "jarvis",
+      "user_input": "que pone aquí",
+      "action_type": "general_query",
+      "response_text": "Lo siento, pero no puedo ver imágenes",
+      "source": "gemini",
+      "success": false
+    },
+    {
+      "timestamp": "2026-04-12T16:44:02.624589",
+      "wake_word": "jarvis",
+      "user_input": "traduce lo",
+      "action_type": "general_query",
+      "response_text": "\"Lo\" se traduce como \"it",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:44:16.197161",
+      "wake_word": "jarvis",
+      "user_input": "gracias jarvis",
+      "action_type": "conversation_stop",
+      "response_text": "Modo conversación finalizado, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:46:29.073930",
+      "wake_word": "jarvis",
+      "user_input": "que es en mi pantalla",
+      "action_type": "general_query",
+      "response_text": "Como asistente de IA, no tengo la capacidad de ver lo que hay en tu pantalla. Necesitaría que me describieras lo que estás viendo para poder ayudarte.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:47:07.632637",
+      "wake_word": "jarvis",
+      "user_input": "que ves en mi pantalla",
+      "action_type": "general_query",
+      "response_text": "Como asistente de IA, no tengo la capacidad de ver tu pantalla ni acceder a información visual. Mi interacción se limita al texto que me proporcionas.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:48:32.917958",
+      "wake_word": "jarvis",
+      "user_input": "qué hora de qué hora es",
+      "action_type": "get_time",
+      "response_text": "Son las 16 y 48, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:48:41.680184",
+      "wake_word": "jarvis",
+      "user_input": "qué día es",
+      "action_type": "general_query",
+      "response_text": "Hoy es martes, 23 de julio de 2024.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:48:57.286777",
+      "wake_word": "jarvis",
+      "user_input": "gracias jarvis",
+      "action_type": "conversation_stop",
+      "response_text": "Modo conversación finalizado, señor.",
+      "source": "local",
+      "success": true
     }
   ],
   "scheduled_events": [

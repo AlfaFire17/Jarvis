@@ -172,7 +172,7 @@ class JARVISOverlay(QWidget):
             text_rect = rect.adjusted(0, int(rect.height() * 0.7), 0, 0)
             painter.drawText(
                 text_rect,
-                int(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.TextWordWrap),
+                int(Qt.AlignmentFlag.AlignCenter | Qt.TextFlag.TextWordWrap),
                 self.text_display
             )
         painter.end()

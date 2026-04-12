@@ -1,4 +1,5 @@
 import re
+import unicodedata
 from core.logger import logger
 
 class Intent:
@@ -42,66 +43,79 @@ class Intent:
 
 class IntentRouter:
     def __init__(self):
-        # Reglas con posibles grupos de captura para extraer nombres de juegos, canciones o ciudades
+        # Reglas ordenadas por PRIORIDAD (Phase 10 Patch)
         self.rules = {
-            Intent.GREETING: [r"hola", r"buenos d[ía]as", r"qu[ée] tal", r"saludos", r"buenas noches"],
-            Intent.IDENTITY: [r"quién te (?:creó|hizo|programó|diseñó)", r"quién es tu creador", r"quién te ha creado"],
-            Intent.SHUTDOWN: [r"apaga el equipo", r"apaga el sistema", r"apaga el ordenador", r"apágate"],
-            Intent.CANCEL_SHUTDOWN: [r"cancela apagado", r"cancela el apagado", r"aborta apagado"],
-            Intent.SYSTEM_ACTION: [r"bloquea el ordenador", r"abre (?:el )?administrador de tareas", r"abre (?:la )?configuración"],
-            Intent.GET_RECENT_MEMORY: [r"últimas conversaciones", r"qu[ée] hice hoy", r"qu[ée] hicimos hoy"],
-            Intent.CHECK_LAST_COMMAND: [r"último comando", r"lo último que me dijiste", r"qu[ée] fue lo último"],
-            Intent.SEARCH_MEMORY: [r"qu[ée] me dijiste sobre (.+)", r"qu[ée] hablamos de (.+)"],
-            Intent.OPEN_PERPLEXITY: [r"abre perplexity", r"abre el buscador"],
-            Intent.OPEN_YOUTUBE: [r"abre youtube"],
-            Intent.GET_TIME: [r"qu[ée]\s+hora\s+es"],
-            Intent.GET_DATE: [r"qu[ée]\s+d[ía]a\s+es\s+hoy"],
-            Intent.GET_WEATHER: [r"clima\s+(.+)"],
-            # -- Alarmas y temporizadores ANTES de Spotify/memoria para evitar colisiones con "pon" --
+            # 1. Control de conversación y silencio (Prioridad inmediata)
+            Intent.CONVERSATION_STOP: [r"sal del modo conversacion", r"^silencio$", r"^ya esta$", r"gracias jarvis"],
+            
+            # 2. Alarmas, Temporizadores y Recordatorios (Prioridad alta)
+            Intent.CANCEL_EVENT: [r"(?:cancela|para|borra)\s+(?:el |la )?(temporizador|alarma|recordatorio)(?:\s+de\s+(.+))?"],
             Intent.CREATE_ALARM: [r"pon(?: una)? alarma(?: para)? las (\d{1,2})[.:](\d{2})"],
             Intent.CREATE_TIMER: [r"pon(?: un)? temporizador(?: de)? (\d+) (minuto|minutos|hora|horas)(?:.*)?"],
-            Intent.PLAY_SPOTIFY: [r"pon\s+(.+)"],
-            # -- Recordatorios temporales ANTES de memoria persistente genérica --
-            Intent.CREATE_REMINDER: [r"(?:recuérdame|avísame)(?:\s+que)?\s+(.+)\s+(?:en|para dentro de)\s+(\d+)\s+(minuto|minutos|hora|horas)"],
-            # -- Cancelación de eventos ANTES de CONVERSATION_STOP para evitar que "para el temporizador" se confunda --
-            Intent.CANCEL_EVENT: [r"(?:cancela|para|borra)\s+(?:el |la )?(temporizador|alarma|recordatorio)(?:\s+de\s+(.+))?"],
-            Intent.LIST_EVENTS: [r"qué alarmas tengo", r"lista de recordatorios", r"qué eventos tengo", r"cuántos recordatorios"],
-            Intent.TIME_REMAINING: [r"cuánto(?: tiempo)? queda"],
-            # -- Conversación: patrones explícitos y específicos --
-            Intent.CONVERSATION_STOP: [r"sal del modo conversación", r"^silencio$", r"^ya está$", r"gracias jarvis"],
-            # -- Visión de pantalla (Fase 10) --
-            Intent.SCREEN_ERROR: [r"ayúdame con (?:este|el) error", r"qué (?:significa|es) (?:este|ese) (?:error|fallo|mensaje)", r"explícame (?:este|ese) (?:error|stack|fallo)"],
-            Intent.ACTIVE_WINDOW: [r"qué ventana tengo (?:abierta|activa)", r"ventana actual"],
-            Intent.COPY_SCREEN: [r"copia (?:el )?texto (?:visible|de (?:la |esta )?pantalla)", r"guarda (?:el )?texto de (?:esta|la) pantalla"],
-            Intent.SCREEN_READ: [r"lee (?:la |esta )?(?:pantalla|ventana)", r"qué (?:pone|dice) (?:en |aquí|la )(?:pantalla)?", r"léeme (?:esto|la pantalla)"],
-            Intent.SCREEN_ANALYZE: [r"analiza (?:la |esta )?pantalla", r"qué (?:hay|ves) en (?:la )?pantalla", r"qué ves", r"resume (?:la |esta )?pantalla", r"resume (?:esto|este texto)"],
-            Intent.VISUAL_FOLLOWUP: [r"explícam?elo", r"tradúcelo", r"resúmelo", r"qué (?:tengo|debo) (?:que )?hacer"],
-            # -- Memoria persistente --
+            Intent.CREATE_REMINDER: [r"(?:recuerdame|avisame)(?:\s+que)?\s+(.+)\s+(?:en|para dentro de)\s+(\d+)\s+(minuto|minutos|hora|horas)"],
+            Intent.LIST_EVENTS: [r"que alarmas tengo", r"lista de recordatorios", r"que eventos tengo", r"cuantos recordatorios"],
+            Intent.TIME_REMAINING: [r"cuanto(?: tiempo)? queda"],
+            
+            # 3. Memoria Persistente (Identificación de hechos)
             Intent.SAVE_MEMORY: [r"(?:recuerda|guarda|no olvides)(?:\s+que)?\s+(.+)"],
-            Intent.QUERY_MEMORY: [r"(?:qué recuerdas de mí|cómo me llamo|qué sabes sobre.*)"],
+            Intent.QUERY_MEMORY: [r"(?:que recuerdas de mi|como me llamo|que sabes sobre.*)"],
             Intent.DELETE_MEMORY: [r"(?:olvida|borra)(?:\s+que)?\s+(.+)"],
-            # -- Apps y archivos --
+            
+            # 4. VISION Y OCR (Prioridad Crítica Phase 10)
+            Intent.SCREEN_ERROR: [r"ayudame con (?:este|el|un) error", r"que (?:significa|es) (?:este|ese|el|un) (?:error|fallo|mensaje)", r"explicame (?:este|ese|el) (?:error|stack|fallo)"],
+            Intent.ACTIVE_WINDOW: [r"que ventana tengo (?:abierta|activa)", r"ventana actual", r"en que (?:app|programa|ventana) estoy"],
+            Intent.COPY_SCREEN: [r"copia (?:el )?texto (?:visible|de (?:la |esta |mi |tu )?pantalla)", r"guarda (?:el )?texto de (?:esta|la|mi|tu) pantalla"],
+            Intent.SCREEN_READ: [r"lee (?:la |esta |mi |tu )?(?:pantalla|ventana)", r"que (?:pone|dice) (?:en |aqui|la |mi |tu )(?:pantalla)?", r"leeme (?:esto|la pantalla|la ventana)"],
+            Intent.SCREEN_ANALYZE: [r"analiza (?:la |esta |mi |tu )?pantalla", r"que (?:hay|ves) (?:en |a traves de )?(?:la |esta |mi |tu )?pantalla", r"que ves", r"resume (?:la |esta |mi |tu )?pantalla", r"resume (?:esto|este texto)"],
+            Intent.VISUAL_FOLLOWUP: [r"explicamelo", r"traducelo", r"resumelo", r"que (?:tengo|debo) (?:que )?hacer"],
+            
+            # 5. Comandos Locales y Consultas Básicas
+            Intent.GREETING: [r"hola", r"buenos dias", r"que tal", r"saludos", r"buenas noches"],
+            Intent.IDENTITY: [r"quien te (?:creo|hizo|programo|diseno)", r"quien es tu creador", r"quien te ha creado"],
+            Intent.GET_TIME: [r"que\s+hora\s+es"],
+            Intent.GET_DATE: [r"que\s+dia\s+es\s+hoy"],
+            Intent.GET_WEATHER: [r"clima\s+(.+)"],
+            Intent.PLAY_SPOTIFY: [r"pon\s+(.+)"],
+            Intent.OPEN_APP: [r"abre\s+(?!el archivo\b)(?!el ordenador\b)(?!el administrador\b)(?!la configuracion\b)(?!youtube\b)(?!perplexity\b)(?!descargas\b)(?!documentos\b)(?!escritorio\b)(?!imagenes\b)(?!mis imagenes\b)(?!proyecto\b)(?!actual\b)(?!jarvis\b)(.+)"],
             Intent.CLOSE_APP: [r"cierra\s+(.+)"],
-            Intent.OPEN_FOLDER: [r"abre\s+(descargas|documentos|escritorio|im[áa]genes|mis im[áa]genes|la carpeta del proyecto|proyecto|actual|jarvis)(?!.*archivo)(?!.*programa)"],
+            Intent.SYSTEM_ACTION: [r"bloquea el ordenador", r"abre (?:el )?administrador de tareas", r"abre (?:la )?configuracion"],
+            Intent.OPEN_FOLDER: [r"abre\s+(descargas|documentos|escritorio|imagenes|mis imagenes|la carpeta del proyecto|proyecto|actual|jarvis)(?!.*archivo)(?!.*programa)"],
             Intent.OPEN_FILE: [r"abre el archivo\s+(.+)"],
             Intent.SEARCH_FILE: [r"(?:busca(?: el archivo)?|encuentra(?: el archivo)?)\s+(.+)"],
-            # Catch-all para apertura de programas y Steam fallback
-            Intent.OPEN_APP: [r"abre\s+(?!el archivo\b)(?!el ordenador\b)(?!el administrador\b)(?!la configuración\b)(?!youtube\b)(?!perplexity\b)(?!descargas\b)(?!documentos\b)(?!escritorio\b)(?!im[áa]genes\b)(?!mis im[áa]genes\b)(?!proyecto\b)(?!actual\b)(?!jarvis\b)(.+)"],
+            Intent.SHUTDOWN: [r"apaga el equipo", r"apaga el sistema", r"apaga el ordenador", r"apagate"],
+            Intent.CANCEL_SHUTDOWN: [r"cancela apagado", r"cancela el apagado", r"aborta apagado"],
+            Intent.GET_RECENT_MEMORY: [r"ultimas conversaciones", r"que hice hoy", r"que hicimos hoy"],
+            Intent.CHECK_LAST_COMMAND: [r"ultimo comando", r"lo ultimo que me dijiste", r"que fue lo ultimo"],
+            Intent.SEARCH_MEMORY: [r"que me dijiste sobre (.+)", r"que hablamos de (.+)"],
+            Intent.OPEN_PERPLEXITY: [r"abre perplexity", r"abre el buscador"],
+            Intent.OPEN_YOUTUBE: [r"abre youtube"],
         }
+
+    def _normalize_text(self, text):
+        """Estandariza el texto: minúsculas, sin acentos y sin espacios extra."""
+        if not text:
+            return ""
+        # 1. Minúsculas
+        text = text.lower().strip()
+        # 2. Eliminar acentos
+        text = ''.join(c for c in unicodedata.normalize('NFD', text)
+                      if unicodedata.category(c) != 'Mn')
+        return text
 
     def route(self, text):
         """Clasifica el texto en una intención y extrae el payload si existe."""
         if not text or len(text.strip()) == 0:
             return Intent.UNKNOWN, None
 
-        text = text.lower().strip()
-        logger.info(f"Analizando intención para: '{text}'")
+        raw_text = text
+        text = self._normalize_text(text)
+        logger.info(f"Ruteando comando (Normalizado: '{text}')")
 
         for intent, patterns in self.rules.items():
             for pattern in patterns:
+                # Los patrones ya NO deben tener acentos para que coincidan con el texto normalizado
                 match = re.search(pattern, text)
                 if match:
-                    # Si hay grupos de captura, extraerlos como payload
                     if not match.groups():
                         payload = None
                     elif len(match.groups()) == 1:
@@ -109,10 +123,10 @@ class IntentRouter:
                     else:
                         payload = match.groups()
                         
-                    logger.info(f"Intención detectada: {intent} (Payload: {payload})")
+                    logger.info(f"INTENCION DETECTADA: {intent} (Payload: {payload})")
                     return intent, payload
 
         # Si no coincide con nada local, lo tratamos como consulta general
-        logger.info(f"Intención por defecto: {Intent.GENERAL_QUERY}")
-        return Intent.GENERAL_QUERY, text
+        logger.info(f"INTENCION POR DEFECTO: {Intent.GENERAL_QUERY}")
+        return Intent.GENERAL_QUERY, raw_text
 
