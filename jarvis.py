@@ -69,6 +69,9 @@ async def process_command(command_text, listener, tts, router, gemini, gui, memo
         else:
             response = say_hello()
 
+    elif intent == Intent.IDENTITY:
+        response = "Fui creado por Pablo Soriano, con asistencia de Perplexity. Mi inspiración estética es el JARVIS de Iron Man, pero mi autor real es Pablo Soriano."
+
     elif intent == Intent.SHUTDOWN:
         response = shutdown_computer()
 
@@ -158,10 +161,7 @@ async def process_command(command_text, listener, tts, router, gemini, gui, memo
 
     elif intent == Intent.GENERAL_QUERY:
         source = "gemini"
-        gui.set_responding.emit("Consultando en mi base de datos, un momento...")
-        conv_manager.set_speaking(True)
-        await tts.speak("Consultando en mi base de datos, un momento...")
-        conv_manager.set_speaking(False)
+        gui.set_responding.emit("Procesando...")
         answer = gemini.ask(payload)
         response = answer
         if "Lo siento" in answer or "ocurrido un error" in answer:

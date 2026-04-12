@@ -31,6 +31,7 @@ class Intent:
     SAVE_MEMORY = "save_memory"
     QUERY_MEMORY = "query_memory"
     DELETE_MEMORY = "delete_memory"
+    IDENTITY = "identity"
     UNKNOWN = "unknown"
 
 class IntentRouter:
@@ -38,6 +39,7 @@ class IntentRouter:
         # Reglas con posibles grupos de captura para extraer nombres de juegos, canciones o ciudades
         self.rules = {
             Intent.GREETING: [r"hola", r"buenos d[ía]as", r"qu[ée] tal", r"saludos", r"buenas noches"],
+            Intent.IDENTITY: [r"quién te (?:creó|hizo|programó|diseñó)", r"quién es tu creador", r"quién te ha creado"],
             Intent.SHUTDOWN: [r"apaga el equipo", r"apaga el sistema", r"apaga el ordenador", r"apágate"],
             Intent.CANCEL_SHUTDOWN: [r"cancela apagado", r"cancela el apagado", r"aborta apagado"],
             Intent.SYSTEM_ACTION: [r"bloquea el ordenador", r"abre (?:el )?administrador de tareas", r"abre (?:la )?configuración"],

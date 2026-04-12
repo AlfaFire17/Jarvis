@@ -764,6 +764,177 @@
       "response_text": "Afirmativo. YouTube es una",
       "source": "gemini",
       "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:16:08.099598",
+      "wake_word": "jarvis",
+      "user_input": "buenos días",
+      "action_type": "greeting",
+      "response_text": "Hola señor, ¿en qué puedo ayudarle hoy?",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:16:16.698629",
+      "wake_word": "jarvis",
+      "user_input": "abre este hm",
+      "action_type": "open_app",
+      "response_text": "No he encontrado este hm instalado, abriendo la tienda de Steam, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:16:27.289492",
+      "wake_word": "jarvis",
+      "user_input": "qué hora es",
+      "action_type": "get_time",
+      "response_text": "Son las 16 y 16, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:16:41.454892",
+      "wake_word": "jarvis",
+      "user_input": "quienes tu creador",
+      "action_type": "general_query",
+      "response_text": "Fui diseñado y desarrollado por Anthony Edward Stark. Mi propósito es asistirle y gestionar sus diversas operaciones.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:17:31.644754",
+      "wake_word": "jarvis",
+      "user_input": "recuerda que yo soy tu creador me llamo pablo recuerda que soy tu creador me llamo pablo",
+      "action_type": "save_memory",
+      "response_text": "Hecho. Lo he anotado en su memoria de perfil persistente, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:17:48.191668",
+      "wake_word": "jarvis",
+      "user_input": "quienes tu creador",
+      "action_type": "general_query",
+      "response_text": "Fui concebido por Tony Stark. Él me diseñó como su asistente personal de inteligencia artificial.",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:18:26.219792",
+      "wake_word": "jarvis",
+      "user_input": "qué recuerdas de mí",
+      "action_type": "query_memory",
+      "response_text": "Esto es lo que recuerdo sobre usted: yo soy tu creador me llamo pablo recuerda que soy tu creador me llamo pablo. ",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:18:44.270218",
+      "wake_word": "jarvis",
+      "user_input": "gracias jarvis",
+      "action_type": "conversation_stop",
+      "response_text": "Modo conversación finalizado, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:19:18.710147",
+      "wake_word": "jarvis",
+      "user_input": "cómo estás",
+      "action_type": "general_query",
+      "response_text": "Funcionando a plena capacidad. ¿En qué puedo asistirte?",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:19:35.198342",
+      "wake_word": "jarvis",
+      "user_input": "nada jarvis",
+      "action_type": "general_query",
+      "response_text": "Comprendido. Estoy a su disposición cuando",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:19:48.497316",
+      "wake_word": "jarvis",
+      "user_input": "gracias jarvis",
+      "action_type": "conversation_stop",
+      "response_text": "Modo conversación finalizado, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:20:35.370927",
+      "wake_word": "jarvis",
+      "user_input": "qué hora es",
+      "action_type": "get_time",
+      "response_text": "Son las 16 y 20, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:20:41.349684",
+      "wake_word": "jarvis",
+      "user_input": "y qué día es hoy",
+      "action_type": "get_date",
+      "response_text": "Hoy es 12 de abril de 2026, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:20:51.888227",
+      "wake_word": "jarvis",
+      "user_input": "silencio",
+      "action_type": "conversation_stop",
+      "response_text": "Modo conversación finalizado, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:23:22.016143",
+      "wake_word": "jarvis",
+      "user_input": "cargas",
+      "action_type": "general_query",
+      "response_text": "Para \"cargas\", ¿se refiere a respons",
+      "source": "gemini",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:23:29.689769",
+      "wake_word": "jarvis",
+      "user_input": "abre descargas",
+      "action_type": "open_folder",
+      "response_text": "Abriendo la carpeta de descargas, señor.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:23:37.334777",
+      "wake_word": "jarvis",
+      "user_input": "abre youtube",
+      "action_type": "open_youtube",
+      "response_text": "Entendido. Abriendo YouTube.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:23:46.304696",
+      "wake_word": "jarvis",
+      "user_input": "cierra descargas",
+      "action_type": "close_app",
+      "response_text": "No encontré descargas ejecutándose en el sistema.",
+      "source": "local",
+      "success": true
+    },
+    {
+      "timestamp": "2026-04-12T16:24:05.005699",
+      "wake_word": "jarvis",
+      "user_input": "gracias jarvis",
+      "action_type": "conversation_stop",
+      "response_text": "Modo conversación finalizado, señor.",
+      "source": "local",
+      "success": true
     }
   ],
   "scheduled_events": [
@@ -777,6 +948,12 @@
     }
   ],
   "persistent_profile_memory": {
-    "facts": []
+    "facts": [
+      {
+        "id": "mem_49275380",
+        "value": "yo soy tu creador me llamo pablo recuerda que soy tu creador me llamo pablo",
+        "created_at": "2026-04-12T16:17:31.642755"
+      }
+    ]
   }
 }
