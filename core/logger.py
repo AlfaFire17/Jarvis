@@ -11,8 +11,7 @@ def setup_logger():
             logging.FileHandler("jarvis.log", encoding='utf-8')
         ]
     )
-    return logging.getLogger("JARVIS")
+    return logging.getLogger("ALFA")
 
 # Initialize and export a default logger
 logger = setup_logger()
-Pelican = logger # For backward compatibility or alternative names if needed

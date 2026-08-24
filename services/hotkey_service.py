@@ -2,7 +2,7 @@ import keyboard
 from core.logger import logger
 import threading
 
-class JARVISHotkeyManager:
+class ALFAHotkeyManager:
     """Registra y gestiona el hotkey global en Windows."""
     def __init__(self, conversation_manager):
         self.conv_manager = conversation_manager
@@ -24,4 +24,3 @@ class JARVISHotkeyManager:
                 logger.info("Hotkey alternativo Ctrl+Shift+M activo para Mute.")
             except Exception as e2:
                 logger.error(f"También falló el atajo secundario. Mute de teclado deshabilitado: {e2}")
-

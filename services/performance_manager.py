@@ -8,7 +8,7 @@ class PerformanceProfile:
 
 class PerformanceManager:
     """
-    Gestiona los perfiles de rendimiento de JARVIS.
+    Gestiona los perfiles de rendimiento de A.L.F.A.
     Controla cuánto tiempo permanece el modelo LLM en VRAM.
     """
 
@@ -28,16 +28,26 @@ class PerformanceManager:
             self.auto_unload = False
         elif self.profile == PerformanceProfile.FAST:
             self.model_name = Config.OLLAMA_MODEL_DEFAULT
-            self.keep_alive = -1   #永 Indefinido
+            self.keep_alive = -1   # Indefinido
             self.auto_unload = False
         
         logger.info(f"Perfil de rendimiento aplicado: {self.profile.upper()} "
                     f"(Modelo: {self.model_name}, KeepAlive: {self.keep_alive}s)")
 
     def set_profile(self, profile_name):
-        """Cambia el perfil de rendimiento."""
-        if profile_name in [PerformanceProfile.GAMING, PerformanceProfile.BALANCED, PerformanceProfile.FAST]:
-            self.profile = profile_name
+        """Cambia el perfil de rendimiento, soportando alias en español."""
+        mapping = {
+            "gaming": PerformanceProfile.GAMING,
+            "ahorro": PerformanceProfile.GAMING,
+            "equilibrado": PerformanceProfile.BALANCED,
+            "balanced": PerformanceProfile.BALANCED,
+            "rapido": PerformanceProfile.FAST,
+            "fast": PerformanceProfile.FAST
+        }
+        
+        target = mapping.get(profile_name.lower())
+        if target:
+            self.profile = target
             self._apply_profile_settings()
             return True
         return False

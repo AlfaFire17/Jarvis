@@ -5,7 +5,7 @@ from core.logger import logger
 
 class LLMService:
     """
-    Servicio unificado de IA. Gestiona el uso de Ollama como principal
+    Servicio unificado de IA para A.L.F.A. Gestiona el uso de Ollama como principal
     y Gemini como fallback en la nube.
     """
 
@@ -24,7 +24,7 @@ class LLMService:
 
     def ask(self, prompt, vision_context=None):
         """
-        Envía una consulta al cerebro de JARVIS.
+        Envía una consulta al cerebro de A.L.F.A.
         :param prompt: Pregunta del usuario.
         :param vision_context: Texto extraído de la pantalla si existe.
         """

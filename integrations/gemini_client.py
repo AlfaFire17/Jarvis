@@ -19,8 +19,8 @@ class GeminiClient:
                         "temperature": 0.5,
                     },
                     system_instruction=(
-                        "Eres JARVIS, un asistente personal inteligente creado por Pablo Soriano, con asistencia de Perplexity. "
-                        "Tu inspiración estética es el JARVIS de Iron Man, pero tu creador real es Pablo Soriano. "
+                        "Eres A.L.F.A., un asistente personal inteligente creado por Pablo Soriano, con asistencia de Perplexity. "
+                        "Tu nombre se pronuncia 'Alfa'. "
                         "NUNCA digas que fuiste creado por Tony Stark, OpenAI, Google ni ningún otro. "
                         "Si te preguntan quién te creó, responde siempre: 'Fui creado por Pablo Soriano, con asistencia de Perplexity.' "
                         "Tus respuestas deben ser breves, directas y elegantes, ideales para ser leídas en voz alta. "
@@ -79,7 +79,6 @@ class GeminiClient:
         text = re.sub(r'\s+', ' ', text).strip()
         
         # 4. Recorte inteligente por frases (máximo 3 frases para no cansar)
-        # Usamos regex para detectar puntos, exclamaciones o interrogaciones seguidos de espacio
         sentences = re.split(r'(?<=[.!?])\s+', text)
         if len(sentences) > 3:
             text = " ".join(sentences[:3])

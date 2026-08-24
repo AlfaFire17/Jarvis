@@ -5,7 +5,7 @@ from winotify import Notification, audio
 from core.logger import logger
 from core.config import Config
 
-class JARVIScheduler:
+class ALFAScheduler:
     def __init__(self, memory, gui_controller, tts, voice_loop=None):
         self.memory = memory
         self.gui_controller = gui_controller
@@ -20,7 +20,7 @@ class JARVIScheduler:
             self._running = True
             self._thread = threading.Thread(target=self._monitor_loop, daemon=True)
             self._thread.start()
-            logger.info("JARVIScheduler iniciado satisfactoriamente en segundo plano.")
+            logger.info("ALFAScheduler iniciado satisfactoriamente en segundo plano.")
 
     def stop_monitor(self):
         self._running = False
@@ -41,7 +41,7 @@ class JARVIScheduler:
                             self._trigger_event(event)
 
             except Exception as e:
-                logger.error(f"Error en JARVIScheduler loop: {e}")
+                logger.error(f"Error en ALFAScheduler loop: {e}")
             
             # Chequear cada 3 segundos evita colapsar el procesador
             time.sleep(3)
@@ -57,8 +57,8 @@ class JARVIScheduler:
         # 2. Native Windows Notification
         try:
             toast = Notification(
-                app_id="JARVIS Assistant",
-                title=f"JARVIS {event_type.capitalize()}",
+                app_id="A.L.F.A. Assistant",
+                title=f"A.L.F.A. {event_type.capitalize()}",
                 msg=message.capitalize(),
                 duration="long"
             )

@@ -28,6 +28,7 @@ class Config:
     STEAM_EXE_PATH = r"C:\Program Files (x86)\Steam\steam.exe"
 
     AGENDA_PATH = os.path.join(project_root, "data", "agenda.json")
+    # Mantener nombre de archivo para compatibilidad con datos existentes
     MEMORY_FILE_PATH = os.path.join(project_root, "data", "jarvis_memory.json")
 
     
@@ -44,9 +45,19 @@ class Config:
     DEFAULT_PERFORMANCE_PROFILE = "balanced"  # "gaming", "balanced", "fast"
     
     # Triggers
-    WAKE_PHRASE = "jarvis"
+    WAKE_PHRASE = "alfa"
 
-    GREETING_TEXT = "Aquí estoy señor, siempre disponible para tí"
+    # Branding (Microfase 11.1)
+    DISPLAY_NAME = "A.L.F.A."
+    SPOKEN_NAME = "Alfa"
+    CREATOR = "Pablo Soriano"
+    CREATOR_ASSISTANCE = "Perplexity"
+    THEME = "red_alpha"
+
+    # Startup
+    AUTO_START_ENABLED = False
+
+    GREETING_TEXT = "Aquí estoy señor, siempre disponible para usted"
 
     @classmethod
     def validate(cls):

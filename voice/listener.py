@@ -95,7 +95,7 @@ class VoiceListener:
 
     def listen(self, trigger_callback, conv_manager=None):
         """Bucle principal híbrido de escucha de wake word o conversación abierta."""
-        logger.info(f"Escuchando wake word: \"{Config.WAKE_PHRASE}\"")
+        logger.info(f"Esperando a {Config.SPOKEN_NAME}... (wake word: \"{Config.WAKE_PHRASE}\")")
         import time
         
         try:

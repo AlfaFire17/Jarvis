@@ -50,7 +50,7 @@ class IntentRouter:
         # Reglas ordenadas por PRIORIDAD (Phase 10 Patch)
         self.rules = {
             # 1. Control de conversación y silencio (Prioridad inmediata)
-            Intent.CONVERSATION_STOP: [r"sal del modo conversacion", r"^silencio$", r"^ya esta$", r"gracias jarvis"],
+            Intent.CONVERSATION_STOP: [r"sal del modo conversacion", r"^silencio$", r"^ya esta$", r"gracias alfa"],
             
             # 2. Alarmas, Temporizadores y Recordatorios (Prioridad alta)
             Intent.CANCEL_EVENT: [r"(?:cancela|para|borra)\s+(?:el |la )?(temporizador|alarma|recordatorio)(?:\s+de\s+(.+))?"],
@@ -80,19 +80,19 @@ class IntentRouter:
             Intent.LLM_STATUS: [r"que (?:modelo|backend|modo de rendimiento) estas usando", r"estado de la ia", r"quien es tu cerebro"],
             
             # 5. Comandos Locales y Consultas Básicas
-            Intent.GREETING: [r"hola", r"buenos dias", r"que tal", r"saludos", r"buenas noches"],
-            Intent.IDENTITY: [r"quien te (?:creo|hizo|programo|diseno)", r"quien es tu creador", r"quien te ha creado"],
+            Intent.GREETING: [r"hola", r"buenos dias", r"que tal", r"saludos"],
+            Intent.IDENTITY: [r"quien te (?:creo|hizo|programo|diseno)", r"quien es tu creador", r"quien te ha creado", r"quien eres", r"como te llamas"],
             Intent.GET_TIME: [r"que\s+hora\s+es"],
             Intent.GET_DATE: [r"que\s+dia\s+es\s+hoy"],
             Intent.GET_WEATHER: [r"clima\s+(.+)"],
             Intent.PLAY_SPOTIFY: [r"pon\s+(.+)"],
-            Intent.OPEN_APP: [r"abre\s+(?!el archivo\b)(?!el ordenador\b)(?!el administrador\b)(?!la configuracion\b)(?!youtube\b)(?!perplexity\b)(?!descargas\b)(?!documentos\b)(?!escritorio\b)(?!imagenes\b)(?!mis imagenes\b)(?!proyecto\b)(?!actual\b)(?!jarvis\b)(.+)"],
+            Intent.OPEN_APP: [r"abre\s+(?!el archivo\b)(?!el ordenador\b)(?!el administrador\b)(?!la configuracion\b)(?!youtube\b)(?!perplexity\b)(?!descargas\b)(?!documentos\b)(?!escritorio\b)(?!imagenes\b)(?!mis imagenes\b)(?!proyecto\b)(?!actual\b)(?!alfa\b)(.+)"],
             Intent.CLOSE_APP: [r"cierra\s+(.+)"],
             Intent.SYSTEM_ACTION: [r"bloquea el ordenador", r"abre (?:el )?administrador de tareas", r"abre (?:la )?configuracion"],
-            Intent.OPEN_FOLDER: [r"abre\s+(descargas|documentos|escritorio|imagenes|mis imagenes|la carpeta del proyecto|proyecto|actual|jarvis)(?!.*archivo)(?!.*programa)"],
+            Intent.OPEN_FOLDER: [r"abre\s+(descargas|documentos|escritorio|imagenes|mis imagenes|la carpeta del proyecto|proyecto|actual|alfa)(?!.*archivo)(?!.*programa)"],
             Intent.OPEN_FILE: [r"abre el archivo\s+(.+)"],
             Intent.SEARCH_FILE: [r"(?:busca(?: el archivo)?|encuentra(?: el archivo)?)\s+(.+)"],
-            Intent.SHUTDOWN: [r"apaga el equipo", r"apaga el sistema", r"apaga el ordenador", r"apagate"],
+            Intent.SHUTDOWN: [r"apaga el equipo", r"apaga el sistema", r"apaga el ordenador", r"apagate", r"buenas noches"],
             Intent.CANCEL_SHUTDOWN: [r"cancela apagado", r"cancela el apagado", r"aborta apagado"],
             Intent.GET_RECENT_MEMORY: [r"ultimas conversaciones", r"que hice hoy", r"que hicimos hoy"],
             Intent.CHECK_LAST_COMMAND: [r"ultimo comando", r"lo ultimo que me dijiste", r"que fue lo ultimo"],
@@ -139,4 +139,3 @@ class IntentRouter:
         # Si no coincide con nada local, lo tratamos como consulta general
         logger.info(f"INTENCION POR DEFECTO: {Intent.GENERAL_QUERY}")
         return Intent.GENERAL_QUERY, raw_text
-

@@ -4,7 +4,7 @@ from core.logger import logger
 
 class ConversationManager:
     """
-    Gestiona los estados de la conversación híbrida,
+    Gestiona los estados de la conversación híbrida de A.L.F.A.,
     como el mute global, el estado de auto-hablado,
     y la ventana de tiempo de "escucha atenta".
     """
@@ -40,7 +40,7 @@ class ConversationManager:
             logger.info("Modo conversación híbrida detenido.")
         
     def set_speaking(self, status: bool):
-        """Marca a JARVIS como hablando o no."""
+        """Marca a A.L.F.A. como hablando o no."""
         self.is_speaking = status
         
     def toggle_mute(self):

@@ -1,3 +1,3 @@
-from .overlay import JARVISOverlay
+from .overlay import ALFAOverlay
 
-__all__ = ["JARVISOverlay"]
+__all__ = ["ALFAOverlay"]

@@ -26,17 +26,17 @@ from actions.vision_actions import (
 )
 from integrations.gemini_client import GeminiClient
 from services.memory_service import MemoryService
-from services.scheduler_service import JARVIScheduler
+from services.scheduler_service import ALFAScheduler
 from services.conversation_manager import ConversationManager
-from services.hotkey_service import JARVISHotkeyManager
+from services.hotkey_service import ALFAHotkeyManager
 from services.vision_service import VisionService
 from services.llm_service import LLMService
 from services.performance_manager import PerformanceManager
 from actions.llm_actions import set_performance_profile, set_llm_backend, unload_model, get_llm_status
 
 # Import the GUI components
-from core.gui_controller import JARVISGUIController
-from gui.overlay import JARVISOverlay
+from core.gui_controller import ALFAGUIController
+from gui.overlay import ALFAOverlay
 
 
 async def process_command(command_text, listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager):
@@ -78,7 +78,7 @@ async def process_command(command_text, listener, tts, router, llm_service, gui,
             response = say_hello()
 
     elif intent == Intent.IDENTITY:
-        response = "Fui creado por Pablo Soriano, con asistencia de Perplexity. Mi inspiración estética es el JARVIS de Iron Man, pero mi autor real es Pablo Soriano."
+        response = "Soy A.L.F.A., creado por Pablo Soriano con asistencia de Perplexity."
 
     elif intent == Intent.SHUTDOWN:
         response = shutdown_computer()
@@ -246,7 +246,7 @@ async def process_command(command_text, listener, tts, router, llm_service, gui,
             gui.set_conversation_mode.emit()
 
 
-async def on_trigger(listener, tts, router, gemini, gui, memory, conv_manager, vision, pre_captured_text=None):
+async def on_trigger(listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager, pre_captured_text=None):
     """Acciones a realizar cuando se detecta el wake word o un follow-up."""
 
     if pre_captured_text:
@@ -255,7 +255,7 @@ async def on_trigger(listener, tts, router, gemini, gui, memory, conv_manager, v
         return
 
     # Activación normal por wake word
-    logger.info("Protocolo JARVIS: Activado.")
+    logger.info("Protocolo A.L.F.A.: Activado.")
     gui.set_wake.emit()
 
     conv_manager.set_speaking(True)
@@ -295,7 +295,7 @@ def main():
 
     app = QApplication(sys.argv)
 
-    logger.info("--- JARVIS Voice Assistant (Fase 10: Screen Vision) ---")
+    logger.info("--- A.L.F.A. Voice Assistant (Fase 11.1: Rebrand) ---")
 
     tts = TTSProvider()
     router = IntentRouter()
@@ -307,16 +307,16 @@ def main():
         logger.error("No se pudo inicializar el sistema de voz.")
         sys.exit(1)
 
-    gui_controller = JARVISGUIController()
-    overlay = JARVISOverlay(gui_controller)
+    gui_controller = ALFAGUIController()
+    overlay = ALFAOverlay(gui_controller)
 
     # Fase 8: Scheduler
-    scheduler = JARVIScheduler(memory, gui_controller, tts)
+    scheduler = ALFAScheduler(memory, gui_controller, tts)
     scheduler.start_monitor()
 
     # Fase 9: Conversation Manager + Hotkey
     conv_manager = ConversationManager(gui_controller)
-    hotkey_manager = JARVISHotkeyManager(conv_manager)
+    hotkey_manager = ALFAHotkeyManager(conv_manager)
     hotkey_manager.start()
 
     # Fase 10: Vision Service
@@ -337,7 +337,7 @@ def main():
     )
     voice_thread.start()
 
-    logger.info("JARVIS completo: GUI, Memoria, Planificador, Conversación, Hotkeys y Visión. Esperando comando...")
+    logger.info("A.L.F.A. operativo: GUI, Memoria, Planificador, Conversación, Hotkeys y Visión. Esperando comando...")
     sys.exit(app.exec())
 
 
