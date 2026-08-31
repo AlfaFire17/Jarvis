@@ -31,6 +31,25 @@ class Config:
     # Mantener nombre de archivo para compatibilidad con datos existentes
     MEMORY_FILE_PATH = os.path.join(project_root, "data", "jarvis_memory.json")
 
+    # Rutas e Integraciones Fase 12 (Informe Diario & OAuth)
+    REPORTS_DIR = os.path.join(project_root, "data", "reports")
+    PRIVATE_DATA_DIR = os.path.join(project_root, "data", "private")
+    GOOGLE_CREDENTIALS_PATH = os.path.join(project_root, "data", "private", "credentials.json")
+    GOOGLE_CREDENTIALS_FALLBACK_PATH = os.path.join(project_root, "credentials.json")
+    GOOGLE_TOKEN_PATH = os.path.join(project_root, "data", "private", "google_token.json")
+
+    # Configuración por defecto para Informe Diario
+    DAILY_BRIEFING_DEFAULT_SETTINGS = {
+        "enabled": True,
+        "auto_generate_on_first_manual_start_per_day": True,
+        "auto_open_report": True,
+        "preferred_browser": "default",
+        "report_history_days": 30,
+        "calendar_days_ahead": 14,
+        "email_lookback_days": 3,
+        "news_limit_total": 10
+    }
+
     
     # API Keys
     ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")

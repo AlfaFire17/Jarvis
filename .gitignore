@@ -8,3 +8,11 @@ temp_speech*
 data/agenda.json
 # vosk-model-*/ (Eliminado para incluir el modelo a petición del usuario)
 model.zip
+
+# Private credentials, OAuth tokens, and generated reports (Fase 12)
+data/private/
+credentials*.json
+!credentials.example.json
+google_token.json
+data/reports/
+

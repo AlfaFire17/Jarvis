@@ -1187,10 +1187,37 @@
       "response_text": "La frase \"de la pared conoz",
       "source": "ollama",
       "success": true
+    },
+    {
+      "timestamp": "2026-08-24T15:50:20.172591",
+      "wake_word": "alfa",
+      "user_input": "quién eres",
+      "action_type": "identity",
+      "response_text": "Soy A.L.F.A., creado por Pablo Soriano con asistencia de Perplexity.",
+      "source": "local",
+      "success": true
     }
   ],
   "scheduled_events": [],
   "persistent_profile_memory": {
     "facts": []
+  },
+  "daily_briefing": {
+    "last_auto_generated_date": "2026-08-31",
+    "last_generated_at": "2026-08-31T16:14:13.962118+02:00",
+    "last_report_path": "C:\\Users\\pablo\\Documents\\GitHub\\Jarvis\\Jarvis\\data\\reports\\alfa-informe-2026-08-31.html",
+    "last_opened_at": "2026-08-31T16:14:10.764517+02:00",
+    "last_generation_status": "success",
+    "report_generation_mode": "manual_command"
+  },
+  "daily_briefing_settings": {
+    "enabled": true,
+    "auto_generate_on_first_manual_start_per_day": true,
+    "auto_open_report": true,
+    "preferred_browser": "default",
+    "report_history_days": 30,
+    "calendar_days_ahead": 14,
+    "email_lookback_days": 3,
+    "news_limit_total": 10
   }
 }

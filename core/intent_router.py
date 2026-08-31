@@ -43,6 +43,12 @@ class Intent:
     SET_BACKEND = "set_backend"
     UNLOAD_MODEL = "unload_model"
     LLM_STATUS = "llm_status"
+    
+    # Informe Diario (Fase 12)
+    GENERATE_DAILY_BRIEFING = "generate_daily_briefing"
+    OPEN_DAILY_BRIEFING = "open_daily_briefing"
+    STATUS_DAILY_BRIEFING = "status_daily_briefing"
+    CONFIG_GOOGLE = "config_google"
     UNKNOWN = "unknown"
 
 class IntentRouter:
@@ -51,6 +57,32 @@ class IntentRouter:
         self.rules = {
             # 1. Control de conversación y silencio (Prioridad inmediata)
             Intent.CONVERSATION_STOP: [r"sal del modo conversacion", r"^silencio$", r"^ya esta$", r"gracias alfa"],
+            
+            # -- Informe Diario A.L.F.A. (Fase 12 - Prioridad alta) --
+            Intent.GENERATE_DAILY_BRIEFING: [
+                r"genera (?:mi |el )?informe diario",
+                r"actualiza (?:mi |el )?informe diario",
+                r"crea (?:mi |el )?informe diario",
+                r"dame el resumen de hoy",
+                r"haz el informe diario"
+            ],
+            Intent.OPEN_DAILY_BRIEFING: [
+                r"abre (?:mi |el )?informe diario",
+                r"ver (?:mi |el )?informe diario",
+                r"muestra (?:mi |el )?informe diario",
+                r"ensename el informe diario"
+            ],
+            Intent.STATUS_DAILY_BRIEFING: [
+                r"estado (?:del |de mi )?informe diario",
+                r"como esta (?:mi |el )?informe diario"
+            ],
+            Intent.CONFIG_GOOGLE: [
+                r"configura (?:mi |el )?calendario",
+                r"conecta gmail",
+                r"conecta (?:el )?calendario",
+                r"configura google",
+                r"conecta google"
+            ],
             
             # 2. Alarmas, Temporizadores y Recordatorios (Prioridad alta)
             Intent.CANCEL_EVENT: [r"(?:cancela|para|borra)\s+(?:el |la )?(temporizador|alarma|recordatorio)(?:\s+de\s+(.+))?"],

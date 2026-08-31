@@ -22,7 +22,16 @@ class MemoryService:
             "scheduled_events": [],
             "persistent_profile_memory": {
                 "facts": []
-            }
+            },
+            "daily_briefing": {
+                "last_auto_generated_date": "",
+                "last_generated_at": "",
+                "last_report_path": "",
+                "last_opened_at": "",
+                "last_generation_status": "none",
+                "report_generation_mode": "none"
+            },
+            "daily_briefing_settings": Config.DAILY_BRIEFING_DEFAULT_SETTINGS
         }
         
         if not os.path.exists(self.file_path):
@@ -48,8 +57,18 @@ class MemoryService:
                 if "facts" not in data.get("persistent_profile_memory", {}):
                     data["persistent_profile_memory"] = {"facts": []}
                     dirty = True
+                if "daily_briefing" not in data:
+                    logger.info("Añadiendo sección 'daily_briefing' al JSON heredado.")
+                    data["daily_briefing"] = default_structure["daily_briefing"]
+                    dirty = True
+                if "daily_briefing_settings" not in data:
+                    logger.info("Añadiendo sección 'daily_briefing_settings' al JSON heredado.")
+                    data["daily_briefing_settings"] = dict(Config.DAILY_BRIEFING_DEFAULT_SETTINGS)
+                    dirty = True
                 
-                # Opcional: limpiar eventos anticuados / disparados / cancelados masivos si hace falta
+                if dirty:
+                    self.memory = data
+                    self._save_memory()
                 
                 return data
         except json.JSONDecodeError:
@@ -71,10 +90,23 @@ class MemoryService:
             with open(tmp_path, "w", encoding="utf-8") as f:
                 json.dump(self.memory, f, ensure_ascii=False, indent=2)
             
-            # Atomic replace (seguro en Windows con Python moderno y POSIX)
-            os.replace(tmp_path, self.file_path)
+            # Atomic replace con reintentos para librar posibles bloqueos temporales en Windows
+            for attempt in range(3):
+                try:
+                    os.replace(tmp_path, self.file_path)
+                    break
+                except PermissionError:
+                    if attempt < 2:
+                        import time
+                        time.sleep(0.05)
+                    else:
+                        with open(self.file_path, "w", encoding="utf-8") as f_out:
+                            json.dump(self.memory, f_out, ensure_ascii=False, indent=2)
+                        if os.path.exists(tmp_path):
+                            os.remove(tmp_path)
         except Exception as e:
             logger.error(f"Error crítico guardando la memoria: {e}")
+
 
     def save_interaction(self, user_input, action_type, response_text, success=True, source="local"):
         """Guarda una nueva interacción en el JSON."""
@@ -198,4 +230,37 @@ class MemoryService:
             resumen += f"{f['value']}. "
             
         return resumen
+
+    # --- FUNCIONES DE INFORME DIARIO (Fase 12) ---
+    def get_daily_briefing_data(self):
+        """Devuelve los metadatos del último informe diario generado."""
+        return self.memory.setdefault("daily_briefing", {
+            "last_auto_generated_date": "",
+            "last_generated_at": "",
+            "last_report_path": "",
+            "last_opened_at": "",
+            "last_generation_status": "none",
+            "report_generation_mode": "none"
+        })
+
+    def update_daily_briefing_data(self, updates_dict):
+        """Actualiza los metadatos del informe diario y guarda de forma atómica."""
+        briefing = self.get_daily_briefing_data()
+        briefing.update(updates_dict)
+        self.memory["daily_briefing"] = briefing
+        self._save_memory()
+        return briefing
+
+    def get_daily_briefing_settings(self):
+        """Devuelve la configuración del informe diario."""
+        return self.memory.setdefault("daily_briefing_settings", dict(Config.DAILY_BRIEFING_DEFAULT_SETTINGS))
+
+    def update_daily_briefing_settings(self, settings_dict):
+        """Actualiza la configuración del informe diario."""
+        current = self.get_daily_briefing_settings()
+        current.update(settings_dict)
+        self.memory["daily_briefing_settings"] = current
+        self._save_memory()
+        return current
+
 

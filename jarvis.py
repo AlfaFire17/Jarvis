@@ -34,13 +34,22 @@ from services.llm_service import LLMService
 from services.performance_manager import PerformanceManager
 from actions.llm_actions import set_performance_profile, set_llm_backend, unload_model, get_llm_status
 
+# Fase 12: Informe Diario & Integraciones Google
+from integrations.google_auth import GoogleAuthManager
+from services.daily_briefing_service import DailyBriefingService
+from actions.daily_briefing_actions import (
+    generate_daily_briefing_action, open_latest_daily_briefing_action,
+    get_daily_briefing_status_action, configure_google_integrations_action
+)
+
 # Import the GUI components
 from core.gui_controller import ALFAGUIController
 from gui.overlay import ALFAOverlay
 
 
-async def process_command(command_text, listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager):
+async def process_command(command_text, listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager, briefing_service=None, google_auth=None):
     """Procesa un comando (ya sea desde wake word o follow-up)."""
+
     gui.set_transcription.emit(command_text)
 
     intent, payload = router.route(command_text)
@@ -209,7 +218,35 @@ async def process_command(command_text, listener, tts, router, llm_service, gui,
     elif intent == Intent.LLM_STATUS:
         response = get_llm_status(llm_service, perf_manager)
 
+    # --- Fase 12: Informe Diario y Workspace ---
+    elif intent == Intent.GENERATE_DAILY_BRIEFING:
+        gui.set_responding.emit("Preparando informe diario...")
+        force_update = "actualiza" in command_text.lower() or "recalcula" in command_text.lower()
+        if briefing_service:
+            response = generate_daily_briefing_action(briefing_service, force=force_update)
+        else:
+            response = "El servicio de informe diario no se encuentra inicializado, señor."
+
+    elif intent == Intent.OPEN_DAILY_BRIEFING:
+        if briefing_service:
+            response = open_latest_daily_briefing_action(briefing_service)
+        else:
+            response = "El servicio de informe diario no está disponible."
+
+    elif intent == Intent.STATUS_DAILY_BRIEFING:
+        if briefing_service:
+            response = get_daily_briefing_status_action(briefing_service)
+        else:
+            response = "No se puede consultar el estado del informe diario."
+
+    elif intent == Intent.CONFIG_GOOGLE:
+        if google_auth:
+            response = configure_google_integrations_action(google_auth)
+        else:
+            response = "El gestor de autenticación de Google no está disponible."
+
     elif intent == Intent.GENERAL_QUERY:
+
         source = llm_service.backend
         gui.set_responding.emit("Pensando...")
         
@@ -246,12 +283,12 @@ async def process_command(command_text, listener, tts, router, llm_service, gui,
             gui.set_conversation_mode.emit()
 
 
-async def on_trigger(listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager, pre_captured_text=None):
+async def on_trigger(listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager, briefing_service=None, google_auth=None, pre_captured_text=None):
     """Acciones a realizar cuando se detecta el wake word o un follow-up."""
 
     if pre_captured_text:
         logger.info(f"Procesando follow-up: '{pre_captured_text}'")
-        await process_command(pre_captured_text, listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager)
+        await process_command(pre_captured_text, listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager, briefing_service, google_auth)
         return
 
     # Activación normal por wake word
@@ -275,12 +312,12 @@ async def on_trigger(listener, tts, router, llm_service, gui, memory, conv_manag
         conv_manager.set_speaking(False)
         return
 
-    await process_command(command_text, listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager)
+    await process_command(command_text, listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager, briefing_service, google_auth)
 
 
-def run_voice_loop(listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager):
+def run_voice_loop(listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager, briefing_service=None, google_auth=None):
     def trigger_callback(pre_captured_text=None):
-        asyncio.run(on_trigger(listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager, pre_captured_text))
+        asyncio.run(on_trigger(listener, tts, router, llm_service, gui, memory, conv_manager, vision, perf_manager, briefing_service, google_auth, pre_captured_text))
 
     try:
         listener.listen(trigger_callback, conv_manager=conv_manager)
@@ -295,7 +332,7 @@ def main():
 
     app = QApplication(sys.argv)
 
-    logger.info("--- A.L.F.A. Voice Assistant (Fase 11.1: Rebrand) ---")
+    logger.info("--- A.L.F.A. Voice Assistant (Fase 12: Informe Diario) ---")
 
     tts = TTSProvider()
     router = IntentRouter()
@@ -326,19 +363,31 @@ def main():
     perf_manager = PerformanceManager()
     llm_service = LLMService(perf_manager)
     
+    # Fase 12: Informe Diario y Google Workspace
+    google_auth = GoogleAuthManager()
+    briefing_service = DailyBriefingService(memory_service=memory)
+
+    # Comprobación de Informe Diario en hilo de fondo (sin bloquear arranque)
+    briefing_thread = threading.Thread(
+        target=briefing_service.check_and_auto_generate_on_startup,
+        daemon=True
+    )
+    briefing_thread.start()
+
     # Emitir estado inicial a la GUI
     gui_controller.set_status_text.emit(f"AI: {llm_service.backend.upper()}")
     gui_controller.set_perf_status.emit(f"Modo: {perf_manager.profile.upper()}")
 
     voice_thread = threading.Thread(
         target=run_voice_loop,
-        args=(listener, tts, router, llm_service, gui_controller, memory, conv_manager, vision, perf_manager),
+        args=(listener, tts, router, llm_service, gui_controller, memory, conv_manager, vision, perf_manager, briefing_service, google_auth),
         daemon=True
     )
     voice_thread.start()
 
-    logger.info("A.L.F.A. operativo: GUI, Memoria, Planificador, Conversación, Hotkeys y Visión. Esperando comando...")
+    logger.info("A.L.F.A. operativo: GUI, Memoria, Planificador, Conversación, Visión e Informe Diario. Esperando comando...")
     sys.exit(app.exec())
+
 
 
 if __name__ == "__main__":
